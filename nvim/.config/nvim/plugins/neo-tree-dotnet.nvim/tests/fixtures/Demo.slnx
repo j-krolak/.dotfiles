@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Solution>
+  <!-- A nested logical folder that is not a disk directory. -->
+  <Folder Name="/Backend/Services/">
+    <Project Path="Api/Api.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+</Solution>

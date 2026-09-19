@@ -1,0 +1,256 @@
+#!/usr/bin/env python3
+"""CLI do dodawania fiszek do Anki przez lokalne API AnkiConnect."""
+
+import argparse
+import html
+import json
+import re
+import sys
+import urllib.error
+import urllib.request
+
+ANKI_CONNECT_URL = "http://127.0.0.1:8765"
+DEFAULT_DECK = "English::Vocabulary"
+DEFAULT_MODEL = "Basic"
+
+
+class AnkiConnectionError(Exception):
+    """Nie udało się połączyć z AnkiConnect."""
+
+
+class AnkiConnectError(Exception):
+    """AnkiConnect odpowiedział błędem."""
+
+
+def invoke(action, **params):
+    payload = json.dumps({"action": action, "version": 6, "params": params}).encode("utf-8")
+    request = urllib.request.Request(
+        ANKI_CONNECT_URL, data=payload, headers={"Content-Type": "application/json"}
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=5) as response:
+            body = response.read()
+    except (urllib.error.URLError, OSError) as exc:
+        raise AnkiConnectionError(
+            f"Nie można połączyć się z AnkiConnect pod adresem {ANKI_CONNECT_URL}.\n"
+            "Sprawdź, czy:\n"
+            "  1. Anki jest uruchomione,\n"
+            "  2. wtyczka AnkiConnect (kod 2055492159) jest zainstalowana,\n"
+            "  3. nic nie blokuje portu 8765 (np. firewall).\n"
+            f"Szczegóły techniczne: {exc}"
+        ) from exc
+
+    try:
+        result = json.loads(body)
+    except json.JSONDecodeError as exc:
+        raise AnkiConnectError(f"Otrzymano nieprawidłową odpowiedź z AnkiConnect: {body!r}") from exc
+
+    if not isinstance(result, dict) or "error" not in result or "result" not in result:
+        raise AnkiConnectError(f"Nieoczekiwany format odpowiedzi AnkiConnect: {result!r}")
+
+    if result["error"] is not None:
+        raise AnkiConnectError(str(result["error"]))
+
+    return result["result"]
+
+
+def ensure_deck(deck_name):
+    decks = invoke("deckNames")
+    if deck_name not in decks:
+        invoke("createDeck", deck=deck_name)
+        print(f"Utworzono nową talię: {deck_name}", file=sys.stderr)
+
+
+def build_front_field(sentence, word):
+    escaped_word = html.escape(word)
+
+    if not sentence:
+        return escaped_word
+
+    escaped_sentence = html.escape(sentence)
+
+    pattern = re.compile(r"\b" + re.escape(escaped_word) + r"\b", re.IGNORECASE)
+    gapped, count = pattern.subn("___", escaped_sentence)
+    if count == 0:
+        pattern = re.compile(re.escape(escaped_word), re.IGNORECASE)
+        gapped, count = pattern.subn("___", escaped_sentence)
+    if count == 0:
+        print(
+            f'Uwaga: nie znaleziono słowa "{word}" w zdaniu źródłowym — '
+            "front karty nie będzie miał luki.",
+            file=sys.stderr,
+        )
+        gapped = escaped_sentence
+
+    return f"{gapped}<br><small>({escaped_word})</small>"
+
+
+def build_back_field(word, pron, pl, definition, sentence, ex2):
+    lines = []
+
+    head = f"<b>{html.escape(word)}</b>"
+    if pron:
+        head += f" /{html.escape(pron)}/"
+    lines.append(head)
+
+    lines.append(f"– {html.escape(pl)}")
+    lines.append(f"📖 {html.escape(definition)}")
+    if sentence:
+        lines.append(f"💬 {html.escape(sentence)}")
+    if ex2:
+        lines.append(f"💬 {html.escape(ex2)}")
+
+    return "<br>".join(lines)
+
+
+def add_main_note(deck, word, pron, pl, definition, sentence, ex2, allow_duplicate):
+    note = {
+        "deckName": deck,
+        "modelName": DEFAULT_MODEL,
+        "fields": {
+            "Front": build_front_field(sentence, word),
+            "Back": build_back_field(word, pron, pl, definition, sentence, ex2),
+        },
+        "options": {"allowDuplicate": allow_duplicate},
+    }
+    return invoke("addNote", note=note)
+
+
+def add_reverse_note(deck, word, pron, pl, allow_duplicate):
+    back = f"<b>{html.escape(word)}</b>"
+    if pron:
+        back += f" /{html.escape(pron)}/"
+
+    note = {
+        "deckName": deck,
+        "modelName": DEFAULT_MODEL,
+        "fields": {
+            "Front": html.escape(pl),
+            "Back": back,
+        },
+        "options": {"allowDuplicate": allow_duplicate},
+    }
+    return invoke("addNote", note=note)
+
+
+def cmd_ping():
+    version = invoke("version")
+    print(f"AnkiConnect działa poprawnie (wersja API: {version}).")
+
+
+def cmd_list_decks():
+    decks = invoke("deckNames")
+    for deck in sorted(decks):
+        print(deck)
+
+
+def cmd_add(args):
+    deck = args.deck or DEFAULT_DECK
+    ensure_deck(deck)
+
+    try:
+        note_id = add_main_note(
+            deck=deck,
+            word=args.word,
+            pron=args.pron,
+            pl=args.pl,
+            definition=args.definition,
+            sentence=args.sentence,
+            ex2=args.ex2,
+            allow_duplicate=args.allow_duplicate,
+        )
+    except AnkiConnectError as exc:
+        raise AnkiConnectError(_explain_add_error(exc, args.word)) from exc
+
+    print(f"Dodano fiszkę \"{args.word}\" do talii \"{deck}\" (id: {note_id}).")
+
+    if args.reverse:
+        try:
+            reverse_id = add_reverse_note(
+                deck=deck,
+                word=args.word,
+                pron=args.pron,
+                pl=args.pl,
+                allow_duplicate=args.allow_duplicate,
+            )
+        except AnkiConnectError as exc:
+            raise AnkiConnectError(_explain_add_error(exc, args.word, reverse=True)) from exc
+        print(f"Dodano też odwróconą fiszkę PL -> EN (id: {reverse_id}).")
+
+
+def _explain_add_error(exc, word, reverse=False):
+    message = str(exc)
+    card_desc = "odwróconej karty" if reverse else "karty"
+    if "duplicate" in message.lower():
+        return (
+            f"AnkiConnect odrzucił dodanie {card_desc} dla słowa \"{word}\" — "
+            "wygląda na duplikat już istniejącej notatki.\n"
+            "Jeśli to celowe, uruchom ponownie z flagą --allow-duplicate."
+        )
+    return f"AnkiConnect zwrócił błąd przy dodawaniu {card_desc} dla słowa \"{word}\": {message}"
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(
+        prog="anki-add",
+        description="Dodaje fiszki do Anki przez lokalne API AnkiConnect.",
+    )
+    parser.add_argument("--ping", action="store_true", help="sprawdź połączenie z AnkiConnect i wypisz wersję API")
+    parser.add_argument("--list-decks", action="store_true", help="wypisz istniejące talie")
+
+    parser.add_argument("--word", help="słowo/wyrażenie do nauczenia się")
+    parser.add_argument("--pron", help="wymowa (opcjonalna)")
+    parser.add_argument("--pl", dest="pl", help="polskie tłumaczenie")
+    parser.add_argument("--def", dest="definition", help="angielska definicja")
+    parser.add_argument(
+        "--sentence",
+        help=(
+            "zdanie źródłowe, w którym spotkałeś słowo (słowo zostanie zamienione na ___ na froncie); "
+            "opcjonalne dla akronimów/terminów technicznych bez naturalnego zdania źródłowego"
+        ),
+    )
+    parser.add_argument("--ex2", help="dodatkowe zdanie przykładowe (opcjonalne)")
+    parser.add_argument("--deck", help=f"nadpisuje domyślną talię ({DEFAULT_DECK})")
+    parser.add_argument(
+        "--reverse", action="store_true", help="dodaj też drugą, prostą kartę PL -> EN dla tego samego słowa"
+    )
+    parser.add_argument("--allow-duplicate", action="store_true", help="pozwól na dodanie duplikatu notatki")
+
+    return parser
+
+
+def main():
+    parser = build_parser()
+    args = parser.parse_args()
+
+    try:
+        if args.ping:
+            cmd_ping()
+            return
+        if args.list_decks:
+            cmd_list_decks()
+            return
+
+        missing = [
+            flag
+            for flag, value in (
+                ("--word", args.word),
+                ("--pl", args.pl),
+                ("--def", args.definition),
+            )
+            if not value
+        ]
+        if missing:
+            parser.error(
+                "brakuje wymaganych argumentów: " + ", ".join(missing) + " (albo użyj --ping / --list-decks)"
+            )
+
+        cmd_add(args)
+
+    except (AnkiConnectionError, AnkiConnectError) as exc:
+        print(f"Błąd: {exc}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

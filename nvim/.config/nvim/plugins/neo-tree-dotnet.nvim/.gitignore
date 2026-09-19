@@ -1,0 +1,5 @@
+*.swp
+*.swo
+*.log
+tests/fixtures/**/bin/
+tests/fixtures/**/obj/

@@ -1,0 +1,17 @@
+/**
+ *
+ * Author : Jakub Królak (j-krolak)
+ * Github : @j-krolak
+ * 
+ * Colors
+ **/
+
+* {
+    background:     rgba(0, 0, 0, 45%);
+    background-alt: #0000;
+    foreground:     #FFFFFFFF;
+    selected:       #FFFFFF10;
+		selected-foreground: #fff;
+    active:         #FFFF;
+    urgent:         #E06C75FF;
+}

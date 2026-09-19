@@ -1,0 +1,131 @@
+#!/bin/bash
+#
+# btw - quick terminal command lookups via Claude, with local caching
+#
+# USAGE:
+#   btw grep                          Cheatsheet-style usage (cached)
+#   btw docker compose                Multi-word command, same as above (cached)
+#   btw docker compose "how to list volumes"
+#                                      Ask a specific question about that command (NOT cached)
+#   btw --help, -h                    Show this help
+#
+# Cache: ~/.btw/<md5-of-query>
+
+set -euo pipefail
+
+CACHE_DIR="$HOME/.btw"
+mkdir -p "$CACHE_DIR"
+
+show_help() {
+  cat <<'EOF'
+btw - quick terminal command lookups via Claude, with local caching
+
+USAGE:
+  btw <command>                     Cheatsheet-style usage for a command (cached)
+  btw <command> <subcommand...>     Same, for multi-word commands, e.g. "docker compose" (cached)
+  btw <command...> "<question>"     Ask a specific question about that command (NOT cached)
+  btw --help, -h                    Show this help
+
+EXAMPLES:
+  btw grep
+  btw docker compose
+  btw docker compose "how to list volumes"
+
+NOTES:
+  - Any quoted argument (containing spaces) is treated as a specific question
+    and always hits the API fresh, no caching.
+  - Unquoted arguments are joined into a command name lookup and cached.
+
+CACHE:
+  Stored in ~/.btw/ as files named by md5 hash of the query.
+  Delete the directory (rm -rf ~/.btw) to clear all cached answers.
+EOF
+}
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+  show_help
+  exit 0
+fi
+
+if [[ $# -eq 0 ]]; then
+  show_help
+  exit 1
+fi
+
+# Sanity check: an odd number of literal " characters means a quote
+# was likely left unclosed (only survives shell parsing if escaped, e.g. \").
+FULL_ARGS="$*"
+QUOTE_COUNT=$(tr -cd '"' <<< "$FULL_ARGS" | wc -c | tr -d ' ')
+if (( QUOTE_COUNT % 2 != 0 )); then
+  echo "Error: unclosed quote in arguments. Make sure your question is wrapped in matching \"...\"." >&2
+  exit 1
+fi
+
+# Split args: anything containing a space was a quoted "question" argument.
+# Everything else is treated as part of the command name.
+QUESTION=""
+CMD_PARTS=()
+for arg in "$@"; do
+  if [[ "$arg" == *" "* ]]; then
+    QUESTION="$arg"
+  else
+    CMD_PARTS+=("$arg")
+  fi
+done
+
+CMD_NAME="${CMD_PARTS[*]:-}"
+
+COLOR_RULES='Use raw ANSI escape codes for color:
+- Explanation/bullet lines: blue (\033[34m...\033[0m)
+- Command name: green (\033[32m...\033[0m)
+- Flags/options: yellow (\033[33m...\033[0m)
+- Quoted arguments and placeholders: default, no color'
+
+# --- Mode 1: ad-hoc question about a command (never cached) ---
+if [[ -n "$QUESTION" ]]; then
+  SYS_PROMPT="Terminal output only, no markdown formatting (no **, no #, no code fences). $COLOR_RULES"
+
+  if [[ -n "$CMD_NAME" ]]; then
+    USER_PROMPT="Question about the command '$CMD_NAME': $QUESTION
+Answer directly and concisely (max 4-5 lines), giving the exact command(s) needed."
+  else
+    USER_PROMPT="$QUESTION
+Answer directly and concisely (max 4-5 lines)."
+  fi
+
+  claude -p "$SYS_PROMPT
+
+$USER_PROMPT" | while IFS= read -r line; do printf '%b\n' "$line"; done
+  exit 0
+fi
+
+# --- Mode 2: cheatsheet lookup for a command name (cached) ---
+if command -v md5sum >/dev/null 2>&1; then
+  HASH=$(echo -n "$CMD_NAME" | md5sum | awk '{print $1}')
+else
+  HASH=$(echo -n "$CMD_NAME" | md5 | awk '{print $1}')
+fi
+
+CACHE_FILE="$CACHE_DIR/$HASH"
+
+if [[ -f "$CACHE_FILE" ]]; then
+  cat "$CACHE_FILE"
+  exit 0
+fi
+
+SYS_PROMPT="Terminal output only, no markdown formatting (no **, no #, no code fences). $COLOR_RULES
+
+If input is a command name, format exactly like a tldr page:
+
+More information: \033[4mURL\033[0m.
+
+- \033[34mDescription of use case\033[0m:
+  \033[32mcommand\033[0m \033[33m-flags\033[0m \"args\"
+
+List 5-8 common use cases, each with description line then indented command line.
+If input is not a command, answer briefly in 2-3 sentences, no special formatting, no colors."
+
+claude -p "$SYS_PROMPT
+
+$CMD_NAME" | while IFS= read -r line; do printf '%b\n' "$line"; done | tee "$CACHE_FILE"
+

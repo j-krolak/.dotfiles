@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Excluded.cs" />
+    <Compile Include="../Shared/Linked.cs" Link="Common/Linked.cs" />
+    <PackageReference Include="Example.Package" Version="1.2.3" />
+  </ItemGroup>
+</Project>

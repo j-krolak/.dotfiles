@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# how - turn a natural language request into shell command(s) via Claude
+#
+# Usage:
+#   how kill the process on port 8080
+#   how find files larger than 100MB
+
+set -euo pipefail
+
+QUERY="$*"
+
+if [[ -z "$QUERY" ]]; then
+  echo "Usage: how <what you want to do>" >&2
+  exit 1
+fi
+
+SYS_PROMPT='Terminal output only, no markdown formatting (no **, no #, no code fences). The input describes a task in natural language. Give the shell command(s) that accomplish it, formatted exactly like this, using raw ANSI escape codes for color:
+
+- \033[34mShort description of what this command does\033[0m:
+  \033[32mcommand\033[0m \033[33m-flags\033[0m "args"
+
+Rules:
+- Description line: blue (\033[34m...\033[0m)
+- Command name: green (\033[32m...\033[0m)
+- Flags/options: yellow (\033[33m...\033[0m)
+- Quoted/literal arguments: default white, no color
+- Give 1-3 alternative commands max, ranked by how directly they solve the task (simplest/most common first)
+- Be concrete: use realistic placeholder values (e.g. actual port numbers, filenames from the query) rather than generic placeholders when the query specifies them
+- No extra prose, no explanations beyond the one-line description per command
+- If the request is unclear or not really a shell task, say so briefly in 1-2 sentences, no color, no special formatting'
+
+claude -p "$SYS_PROMPT
+
+Task: $QUERY" | while IFS= read -r line; do printf '%b\n' "$line"; done
+

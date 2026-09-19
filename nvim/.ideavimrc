@@ -1,0 +1,29 @@
+let mapleader=" "
+
+nnoremap <Leader>nf :action NewElement<CR>
+nnoremap <Leader>nc :action NewCSharpClass<CR>
+nnoremap <Leader>ca :action ShowIntentionActions<CR>
+set clipboard+=unnamedplus
+
+
+" file search
+nnoremap <leader>ff :action GotoFile<CR>
+" file grep
+nnoremap <leader>fg :action FindInPath<CR>
+" recently opened files
+nnoremap <leader>fr :action RecentFiles<CR>
+"  find class 
+nnoremap <leader>fc :action GotoClass<CR>
+" find symbol
+nnoremap <leader>fs :action GotoSymbol<CR>
+
+" Override close tab
+sethandler <C-w> a:ide
+
+" Enter zed mode
+nnoremap <leader>z :action ToggleZenMode<CR>
+
+" Toggle tree view
+nnoremap <leader>ee :action ActivateProjectToolWindow<CR>
+sethandler <C-6> a:vim
+set number relativenumber

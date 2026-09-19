@@ -1,0 +1,25 @@
+# Logs and temp files
+*.log
+*.bak
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.py[cod]
+
+# herdr runtime state (config.toml is kept)
+herdr/.config/herdr/*.sock
+herdr/.config/herdr/session.json
+herdr/.config/herdr/plugins.json
+herdr/.config/herdr/release-notes.json
+herdr/.config/herdr/.plugins.lock
+herdr/.config/herdr/plugins/
+
+# Plugin managers clone these themselves
+tmux/.config/tmux/plugins/
+
+# Wallpapers: large binaries, mostly stock images of unclear license.
+# Directory is kept so the quickshell picker has somewhere to scan.
+quickshell/.config/quickshell/wallpapers/*
+!quickshell/.config/quickshell/wallpapers/.gitkeep
