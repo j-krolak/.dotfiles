@@ -104,41 +104,75 @@ return {
     }
   },
   {
-    "dlyongemallo/diffview-plus.nvim",
-    cmd = {
-      "DiffviewOpen",
-      "DiffviewClose",
-      "DiffviewToggleFiles",
-      "DiffviewFocusFiles",
-      "DiffviewFileHistory",
-    },
+    "esmuellert/codediff.nvim",
+    cmd = "CodeDiff",
     keys = {
-      { "<leader>gd", "<cmd>DiffviewToggle<cr>",      desc = "Diffview: open" },
-      { "<leader>gh", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview: file history" },
+      {
+        "<leader>gd",
+        function()
+          local lifecycle = require("codediff.ui.lifecycle")
+          local session = require("codediff.ui.lifecycle.session")
+
+          -- Close an already open diff tab, otherwise open a new one.
+          for tabpage in pairs(session.get_active_diffs()) do
+            if vim.api.nvim_tabpage_is_valid(tabpage) then
+              vim.api.nvim_set_current_tabpage(tabpage)
+              lifecycle.close(tabpage)
+              return
+            end
+          end
+
+          vim.cmd("CodeDiff")
+        end,
+        desc = "CodeDiff: toggle",
+      },
+      { "<leader>gh", "<cmd>CodeDiff history<cr>", desc = "CodeDiff: file history" },
     },
     opts = {
-      file_panel = {
-        listing_style = "tree",
-        win_config = {
-          width = 45,
-          position = "right",
-        },
-      },
-      view = {
-        default = {
-          layout = "diff1_inline",
-        },
-        inline = {
-          style = "unified",
+      keymaps = {
+        view = {
+          next_file = "<Tab>",
+          prev_file = "<S-Tab>",
         },
       },
     },
   },
+  -- {
+  --   "dlyongemallo/diffview-plus.nvim",
+  --   cmd = {
+  --     "DiffviewOpen",
+  --     "DiffviewClose",
+  --     "DiffviewToggleFiles",
+  --     "DiffviewFocusFiles",
+  --     "DiffviewFileHistory",
+  --   },
+  --   keys = {
+  --     { "<leader>gd", "<cmd>DiffviewToggle<cr>",      desc = "Diffview: open" },
+  --     { "<leader>gh", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview: file history" },
+  --   },
+  --   opts = {
+  --     file_panel = {
+  --       listing_style = "tree",
+  --       win_config = {
+  --         width = 45,
+  --         position = "right",
+  --       },
+  --     },
+  --     view = {
+  --       default = {
+  --         layout = "diff1_inline",
+  --       },
+  --       inline = {
+  --         style = "unified",
+  --       },
+  --     },
+  --   },
+  -- },
   {
     "NeogitOrg/neogit",
     dependencies = {
-      "nvim-lua/plenary.nvim",           -- required
-      "dlyongemallo/diffview-plus.nvim", -- optional - Diff integration
+      "nvim-lua/plenary.nvim", -- required
+      -- "dlyongemallo/diffview-plus.nvim", -- optional - Diff integration
 
       -- Only one of these is needed.
       "nvim-telescope/telescope.nvim", -- optional
