@@ -2,10 +2,37 @@ return {
 	{
 		'nvim-telescope/telescope.nvim',
 		version = '*',
+		cmd = "Telescope",
 		dependencies = {
 			'nvim-lua/plenary.nvim',
 			-- optional but recommended
 			{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+		},
+		-- Loaded on first keypress. The keymaps must live here (not in config),
+		-- otherwise they don't exist until telescope is already loaded.
+		keys = {
+			{ "<space>fh", function() require('telescope.builtin').help_tags() end, desc = "Help tags" },
+			{ "<space>ff", function() require('telescope.builtin').find_files() end, desc = "Find files" },
+			{ "<space>fg", function() require('telescope.builtin').live_grep() end, desc = "Live grep" },
+			{ "<leader>fr", function() require('telescope.builtin').lsp_references() end, desc = "Find references" },
+			{ "<leader>fi", function() require('telescope.builtin').lsp_implementations() end, desc = "Find implementations" },
+			{
+				"<space>fa",
+				function() require('telescope.builtin').find_files { hidden = true, no_ignore = true } end,
+				desc = "Find files (all: hidden + ignored)",
+			},
+			{
+				"<space>en",
+				function() require('telescope.builtin').find_files { cwd = vim.fn.stdpath("config") } end,
+				desc = "Edit Neovim config",
+			},
+			{
+				"<space>ep",
+				function()
+					require('telescope.builtin').find_files { cwd = vim.fs.joinpath(vim.fn.stdpath("data"), "lazy") }
+				end,
+				desc = "Edit plugins",
+			},
 		},
 		config = function()
 			require('telescope').setup {
@@ -26,26 +53,6 @@ return {
 					},
 				},
 			}
-
-			local builtin = require('telescope.builtin')
-			vim.keymap.set("n", "<space>fh", builtin.help_tags)
-			vim.keymap.set("n", "<space>ff", builtin.find_files)
-			vim.keymap.set("n", "<space>fg", builtin.live_grep)
-			vim.keymap.set("n", "<leader>fr", builtin.lsp_references, { desc = "Find references" })
-			vim.keymap.set("n", "<leader>fi", builtin.lsp_implementations, { desc = "Find implementations" })
-			vim.keymap.set("n", "<space>fa", function()
-				builtin.find_files { hidden = true, no_ignore = true }
-			end, { desc = "Find files (all: hidden + ignored)" })
-			vim.keymap.set("n", "<space>en", function()
-				require('telescope.builtin').find_files {
-					cwd = vim.fn.stdpath("config")
-				}
-			end)
-			vim.keymap.set("n", "<space>ep", function()
-				require('telescope.builtin').find_files {
-					cwd = vim.fs.joinpath(vim.fn.stdpath("data"), "lazy")
-				}
-			end)
 		end
 	}
 }

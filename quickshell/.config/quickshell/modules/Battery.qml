@@ -1,19 +1,22 @@
 import QtQuick
 import Quickshell.Services.UPower
 
-// Like waybar's "battery" module. Hides itself entirely on desktops
-// that don't have a battery.
+// Like waybar's "battery" module, but on a desktop with no battery this
+// swaps to a plain power button instead of hiding - clicking it opens
+// PowerOverview.qml (log out / shut down) rather than BatteryOverview.qml.
 Text {
     id: root
 
     readonly property UPowerDevice device: UPower.displayDevice
+    readonly property bool hasBattery: device !== null && device.isLaptopBattery
     readonly property bool charging: device && device.state === UPowerDeviceState.Charging
     // UPower reports this as a 0-1 fraction, not 0-100.
     readonly property real percent: device ? device.percentage * 100 : 0
 
-    visible: device !== null && device.isLaptopBattery
+    visible: true
 
     color: {
+        if (!hasBattery) return Theme.foreground
         if (charging) return Theme.good
         if (percent <= 15) return Theme.urgent
         return Theme.foreground
@@ -23,7 +26,7 @@ Text {
     leftPadding: Theme.modulePadding
     rightPadding: Theme.modulePadding
 
-    text: device ? icon() + " " + Math.round(percent) + "%" : ""
+    text: hasBattery ? (icon() + " " + Math.round(percent) + "%") : "⏻"
 
     function icon() {
         if (charging) return "󰂄"
@@ -37,6 +40,12 @@ Text {
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        onClicked: BatteryState.visible = !BatteryState.visible
+        onClicked: {
+            if (root.hasBattery) {
+                BatteryState.visible = !BatteryState.visible
+            } else {
+                PowerState.visible = !PowerState.visible
+            }
+        }
     }
 }

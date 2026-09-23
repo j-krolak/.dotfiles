@@ -4,7 +4,11 @@
 
 return {
   -- Per machine: iHD on Intel, radeonsi on AMD, nvidia on NVIDIA.
-  va_driver = "iHD",
+  va_driver = "radeonsi",
+
+  -- Per machine: true on the desktop (single external monitor, no laptop
+  -- panel), false on the laptop (eDP-1 + external HDMI monitor).
+  single_monitor = true,
 
   monitors = {
     a = "eDP-1",

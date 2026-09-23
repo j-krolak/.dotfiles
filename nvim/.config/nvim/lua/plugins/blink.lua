@@ -1,5 +1,6 @@
 return {
 	"saghen/blink.cmp",
+	event = { "InsertEnter", "CmdlineEnter" },
 	dependencies = { 'saghen/blink.lib' },
 	opts = {
 		fuzzy = { implementation = "lua" },
@@ -23,8 +24,10 @@ return {
 			},
 
 			-- Keep completion/snippet navigation separate from Copilot suggestions.
-			['<Tab>'] = { 'select_next', 'snippet_forward', 'fallback' },
-			['<S-Tab>'] = { 'select_prev', 'snippet_backward', 'fallback' },
+			['<Tab>'] = { 'select_and_accept', 'snippet_forward', 'fallback' },
+			['<S-Tab>'] = { 'snippet_backward', 'fallback' },
+			['<Down>'] = { 'select_next', 'fallback' },
+			['<Up>'] = { 'select_prev', 'fallback' },
 
 			['<C-d>'] = { 'scroll_documentation_up', 'fallback' },
 			['<C-f>'] = { 'scroll_documentation_down', 'fallback' },

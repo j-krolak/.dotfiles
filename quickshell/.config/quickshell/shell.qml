@@ -38,5 +38,6 @@ ShellRoot {
   SystemStatsOverview {}
   WallpaperPickerOverview {}
   BatteryOverview {}
+  PowerOverview {}
   NotificationsOverview {}
 }

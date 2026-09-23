@@ -15,6 +15,7 @@ return
 	},
 	{
 		"GustavEikaas/easy-dotnet.nvim",
+		ft = { "cs", "fsharp" },
 		-- 'nvim-telescope/telescope.nvim' or 'ibhagwan/fzf-lua' or 'folke/snacks.nvim'
 		-- are highly recommended for a better experience
 		dependencies = { "nvim-lua/plenary.nvim", 'mfussenegger/nvim-dap', 'folke/snacks.nvim', },
@@ -137,7 +138,7 @@ return
 				fsproj_mappings = true,
 				auto_bootstrap_namespace = {
 					--block_scoped, file_scoped
-					type = "block_scoped",
+					type = "file_scoped",
 					enabled = true,
 					use_clipboard_json = {
 						behavior = "prompt", --'auto' | 'prompt' | 'never',

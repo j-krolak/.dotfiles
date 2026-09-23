@@ -26,6 +26,7 @@ return {
         markdown = { "prettier" },
         astro = { "prettier" },
         csharp = { "csharpier" },
+        xml = { "lemminx" },
       },
       format_on_save = {
         lsp_format = "fallback",

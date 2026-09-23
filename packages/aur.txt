@@ -6,7 +6,6 @@ cliamp-bin
 clipse
 fluent-gtk-theme
 paru
-paru-debug
 powershell-bin
 rider
 sway-audio-idle-inhibit-git

@@ -7,6 +7,10 @@ hl.env("HYPRCURSOR_THEME", "Bibata-Modern-Classic")
 hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("XCURSOR_THEME", "Bibata-Modern-Classic")
 hl.env("XCURSOR_SIZE", "24")
+-- `env` does not expand shell variables.  Keep the Flatpak export locations
+-- ahead of the standard XDG directories so rofi's drun mode finds their
+-- .desktop files as well.
+hl.env("XDG_DATA_DIRS", os.getenv("HOME") .. "/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share")
 hl.env("LIBVA_DRIVER_NAME", require("lua.core.variables").va_driver)
 
 -- "arch-" confirmed correct: /etc/xdg/menus/arch-applications.menu exists,

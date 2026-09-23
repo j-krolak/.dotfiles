@@ -11,6 +11,13 @@ vim.opt.softtabstop = 2
 vim.opt.wrap = false
 vim.opt.fillchars:append({ diff = " " })
 
+-- Improve default search behavior
+vim.o.incsearch = true
+
+vim.o.cursorline = true
+
+vim.opt.title = true
+
 vim.api.nvim_create_autocmd("CursorHold", {
   callback = function()
     vim.lsp.buf.document_highlight()
@@ -28,3 +35,10 @@ vim.api.nvim_create_autocmd("CursorMoved", {
     vim.lsp.buf.clear_references()
   end,
 })
+
+
+
+
+
+
+

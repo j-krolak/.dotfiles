@@ -48,38 +48,42 @@ for _, pair in ipairs(altShiftTargets) do
 	})
 end
 
--- TODO: check it
-bind.extend(keymaps, bind.dual(
-	"Swap active workspaces between monitors",
-	"BACKSLASH",
-	hl.exec("hyprctl dispatch swapactiveworkspaces " .. monitors.a .. " " .. monitors.b)
-))
+-- These all assume two real monitors (laptop panel + external), so they
+-- don't make sense on a single-monitor machine like the desktop.
+if not vars.single_monitor then
+	-- TODO: check it
+	bind.extend(keymaps, bind.dual(
+		"Swap active workspaces between monitors",
+		"BACKSLASH",
+		hl.exec("hyprctl dispatch swapactiveworkspaces " .. monitors.a .. " " .. monitors.b)
+	))
 
-table.insert(keymaps,
-	{
-		name = "Move window to monitor " .. monitors.a,
-		keymap = "ALT + 1",
-		action = hl.exec(
-			"hyprctl dispatch movewindow mon:0")
-	})
-table.insert(keymaps,
-	{
-		name = "Move window to monitor " .. monitors.b,
-		keymap = "ALT + 2",
-		action = hl.exec(
-			"hyprctl dispatch movewindow mon:1")
-	})
+	table.insert(keymaps,
+		{
+			name = "Move window to monitor " .. monitors.a,
+			keymap = "ALT + 1",
+			action = hl.exec(
+				"hyprctl dispatch movewindow mon:0")
+		})
+	table.insert(keymaps,
+		{
+			name = "Move window to monitor " .. monitors.b,
+			keymap = "ALT + 2",
+			action = hl.exec(
+				"hyprctl dispatch movewindow mon:1")
+		})
 
--- swap keyboard focus to the other monitor
-table.insert(keymaps, {
-	name   = "Focus other monitor",
-	keymap = "ALT + O",
-	action = hl.exec("hyprctl dispatch focusmonitor " .. monitors.a .. " && hyprctl dispatch focusmonitor " .. monitors.b),
-})
-table.insert(keymaps, {
-	name   = "Focus other monitor",
-	keymap = "ALT + I",
-	action = hl.exec("hyprctl dispatch focusmonitor " .. monitors.b .. " && hyprctl dispatch focusmonitor " .. monitors.a),
-})
+	-- swap keyboard focus to the other monitor
+	table.insert(keymaps, {
+		name   = "Focus other monitor",
+		keymap = "ALT + O",
+		action = hl.exec("hyprctl dispatch focusmonitor " .. monitors.a .. " && hyprctl dispatch focusmonitor " .. monitors.b),
+	})
+	table.insert(keymaps, {
+		name   = "Focus other monitor",
+		keymap = "ALT + I",
+		action = hl.exec("hyprctl dispatch focusmonitor " .. monitors.b .. " && hyprctl dispatch focusmonitor " .. monitors.a),
+	})
+end
 
 return keymaps
