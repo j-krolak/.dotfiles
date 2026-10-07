@@ -39,6 +39,8 @@ return {
         last_modified = { enabled = false },
       },
       filesystem = {
+        -- oil.nvim opens directories (`nvim .`)
+        hijack_netrw_behavior = "disabled",
         follow_current_file = {
           enabled = true,
         },

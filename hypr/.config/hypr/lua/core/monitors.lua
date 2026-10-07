@@ -13,8 +13,8 @@ local vars = require("lua.core.variables")
 -- monitor). "highres" gets both: native resolution, at its best refresh rate.
 hl.monitor({ output = vars.monitors.b, mode = "highres", position = "0x0", scale = 1 })
 
-if not vars.single_monitor then
-	hl.monitor({ output = vars.monitors.a, mode = "1920x1080@60", position = "auto-right", scale = 1 })
-end
+-- Unconditional: without a rule Hyprland auto-picks scale 1.5 for the laptop
+-- panel. A rule for an absent output (desktop) is a no-op.
+hl.monitor({ output = vars.monitors.a, mode = "1920x1080@60", position = "auto-right", scale = 1 })
 
 -- Lid switch handling lives in lua/core/lid.lua (delegates to scripts/lid.sh).

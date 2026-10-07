@@ -27,6 +27,8 @@ return {
         astro = { "prettier" },
         csharp = { "csharpier" },
         xml = { "lemminx" },
+        c = { "clang-format" },
+        cpp = { "clang-format" },
       },
       format_on_save = {
         lsp_format = "fallback",

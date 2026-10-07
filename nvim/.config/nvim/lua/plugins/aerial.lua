@@ -12,11 +12,9 @@ return {
 			show_guides = true,
 			filter_kind = false,
 		})
-		pcall(require("telescope").load_extension, "aerial")
 	end,
 	keys = {
 		{ "<leader>o",  "<cmd>AerialToggle!<cr>",    desc = "Toggle Aerial outline" },
-		{ "<leader>fo", "<cmd>Telescope aerial<cr>", desc = "Find symbol (Aerial)" },
 		{ "{",          "<cmd>AerialPrev<cr>",       desc = "Aerial: previous symbol" },
 		{ "}",          "<cmd>AerialNext<cr>",       desc = "Aerial: next symbol" },
 	},

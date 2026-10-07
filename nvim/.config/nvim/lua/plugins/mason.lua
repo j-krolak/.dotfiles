@@ -28,6 +28,17 @@ return {
 				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" },
 			})
 
+			-- mason-lspconfig only installs LSP servers; formatters go through the registry.
+			local registry = require("mason-registry")
+			registry.refresh(function()
+				for _, name in ipairs({ "clang-format" }) do
+					local pkg = registry.get_package(name)
+					if not pkg:is_installed() then
+						pkg:install()
+					end
+				end
+			end)
+
 			require("mason-lspconfig").setup({
 				ensure_installed = { "ts_ls", "vue_ls", "clangd", "pyright", "eslint", "lua_ls", "html", "cssls" },
 				-- easy-dotnet.nvim ships its own Roslyn client ("easy_dotnet"); letting

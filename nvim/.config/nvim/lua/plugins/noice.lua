@@ -1,9 +1,7 @@
 return { {
   "folke/noice.nvim",
   event = "VeryLazy",
-  dependencies = {
-    "rcarriga/nvim-notify",
-  },
+  dependencies = { "folke/snacks.nvim" },
   opts = {
     presets = {
       lsp_doc_border = true

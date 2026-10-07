@@ -3,104 +3,56 @@ return {
     "lewis6991/gitsigns.nvim",
     event = { "BufReadPre", "BufNewFile" },
     opts = {
-      signs                        = {
-        add          = { text = '┃' },
-        change       = { text = '┃' },
-        delete       = { text = '_' },
-        topdelete    = { text = '‾' },
-        changedelete = { text = '~' },
-        untracked    = { text = '┆' },
-      },
-      signs_staged                 = {
-        add          = { text = '┃' },
-        change       = { text = '┃' },
-        delete       = { text = '_' },
-        topdelete    = { text = '‾' },
-        changedelete = { text = '~' },
-        untracked    = { text = '┆' },
-      },
-      signs_staged_enable          = true,
-      signcolumn                   = true,  -- Toggle with `:Gitsigns toggle_signs`
-      numhl                        = false, -- Toggle with `:Gitsigns toggle_numhl`
-      linehl                       = false, -- Toggle with `:Gitsigns toggle_linehl`
-      word_diff                    = false, -- Toggle with `:Gitsigns toggle_word_diff`
-      watch_gitdir                 = {
-        follow_files = true
-      },
-      auto_attach                  = true,
-      attach_to_untracked          = false,
-      current_line_blame           = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
-      current_line_blame_opts      = {
-        virt_text = true,
-        virt_text_pos = 'eol', -- 'eol' | 'overlay' | 'right_align'
-        delay = 1000,
-        ignore_whitespace = false,
-        virt_text_priority = 100,
-        use_focus = true,
-      },
-      current_line_blame_formatter = '<author>, <author_time:%R> - <summary>',
-      sign_priority                = 6,
-      update_debounce              = 100,
-      status_formatter             = nil,   -- Use default
-      max_file_length              = 40000, -- Disable if file is longer than this (in lines)
-      preview_config               = {
-        -- Options passed to nvim_open_win
-        style = 'minimal',
-        relative = 'cursor',
-        row = 0,
-        col = 1
-      },
-
-      on_attach                    = function(bufnr)
+      on_attach = function(bufnr)
         local gs = package.loaded.gitsigns
 
-        vim.keymap.set('n', ']h', function()
-          if vim.wo.diff then
-            vim.cmd.normal({ ']c', bang = true })
-          else
-            gs.nav_hunk('next')
+        local function hunk(direction, diff_key, opts)
+          return function()
+            if vim.wo.diff then
+              vim.cmd.normal({ diff_key, bang = true })
+            else
+              gs.nav_hunk(direction, opts)
+            end
           end
-        end, { buffer = bufnr, desc = 'Next git hunk' })
+        end
+        local next_hunk, prev_hunk = hunk('next', ']c'), hunk('prev', '[c')
 
-        vim.keymap.set('n', '[h', function()
-          if vim.wo.diff then
-            vim.cmd.normal({ '[c', bang = true })
-          else
-            gs.nav_hunk('prev')
-          end
-        end, { buffer = bufnr, desc = 'Previous git hunk' })
+        vim.keymap.set('n', ']h', next_hunk, { buffer = bufnr, desc = 'Next git hunk' })
+        vim.keymap.set('n', '[h', prev_hunk, { buffer = bufnr, desc = 'Previous git hunk' })
+        vim.keymap.set('n', '<leader>]c', next_hunk, { buffer = bufnr, desc = 'Next git hunk' })
+        vim.keymap.set('n', '<leader>[c', prev_hunk, { buffer = bufnr, desc = 'Previous git hunk' })
+        vim.keymap.set('n', ']<End>', hunk('next', ']c', { preview = true }),
+          { buffer = bufnr, desc = 'Next git hunk (preview)' })
+        vim.keymap.set('n', '[<Home>', hunk('prev', '[c', { preview = true }),
+          { buffer = bufnr, desc = 'Previous git hunk (preview)' })
 
-        vim.keymap.set('n', '<leader>hd', function()
+        local function map(mode, lhs, rhs, desc)
+          vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
+        end
+        local function range()
+          return { vim.fn.line('.'), vim.fn.line('v') }
+        end
+
+        map('n', '<leader>gD', function()
           if vim.wo.diff then
             vim.cmd('diffoff!')
           else
-            require('gitsigns').diffthis()
+            gs.diffthis()
           end
-        end, {
-          buffer = bufnr,
-          desc = 'Toggle git diff',
-        })
-
-        vim.keymap.set('n', '<leader>hs', gs.stage_hunk, {
-          buffer = bufnr,
-          desc = 'Stage git hunk',
-        })
-
-        vim.keymap.set('n', '<leader>hr', gs.reset_hunk, {
-          buffer = bufnr,
-          desc = 'Reset git hunk',
-        })
-
-        vim.keymap.set('n', '<leader>hb', gs.blame_line, {
-          buffer = bufnr,
-          desc = 'Blame line',
-        })
-
-        vim.keymap.set('n', '<leader>hp', gs.preview_hunk, {
-          buffer = bufnr,
-          desc = 'Preview chunk',
-        })
- 
+        end, 'Toggle git diff (split)')
+        map('n', '<leader>gp', gs.preview_hunk, 'Preview hunk')
+        map('n', '<leader>gi', gs.preview_hunk_inline, 'Preview hunk inline')
+        map('n', '<leader>gb', gs.blame_line, 'Blame line')
+        map('n', '<leader>gB', gs.toggle_current_line_blame, 'Toggle inline blame')
+        map('n', '<leader>gw', gs.toggle_word_diff, 'Toggle word diff')
+        map('n', '<leader>gs', gs.stage_hunk, 'Stage hunk')
+        map('v', '<leader>gs', function() gs.stage_hunk(range()) end, 'Stage selected lines')
+        map('n', '<leader>gr', gs.reset_hunk, 'Reset hunk')
+        map('v', '<leader>gr', function() gs.reset_hunk(range()) end, 'Reset selected lines')
+        map('n', '<leader>gS', gs.stage_buffer, 'Stage buffer')
+        map('n', '<leader>gR', gs.reset_buffer, 'Reset buffer')
+        map('n', '<leader>gq', gs.setqflist, 'Hunks to quickfix')
+        map({ 'o', 'x' }, 'ih', gs.select_hunk, 'Inner hunk')
       end,
     }
   },
@@ -130,6 +82,8 @@ return {
       { "<leader>gh", "<cmd>CodeDiff history<cr>", desc = "CodeDiff: file history" },
     },
     opts = {
+      -- Moves default to DiffChange, which the theme keeps olive like inserts.
+      highlights = { line_move = "#264f78" },
       keymaps = {
         view = {
           next_file = "<Tab>",
@@ -138,46 +92,11 @@ return {
       },
     },
   },
-  -- {
-  --   "dlyongemallo/diffview-plus.nvim",
-  --   cmd = {
-  --     "DiffviewOpen",
-  --     "DiffviewClose",
-  --     "DiffviewToggleFiles",
-  --     "DiffviewFocusFiles",
-  --     "DiffviewFileHistory",
-  --   },
-  --   keys = {
-  --     { "<leader>gd", "<cmd>DiffviewToggle<cr>",      desc = "Diffview: open" },
-  --     { "<leader>gh", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview: file history" },
-  --   },
-  --   opts = {
-  --     file_panel = {
-  --       listing_style = "tree",
-  --       win_config = {
-  --         width = 45,
-  --         position = "right",
-  --       },
-  --     },
-  --     view = {
-  --       default = {
-  --         layout = "diff1_inline",
-  --       },
-  --       inline = {
-  --         style = "unified",
-  --       },
-  --     },
-  --   },
-  -- },
   {
     "NeogitOrg/neogit",
     dependencies = {
-      "nvim-lua/plenary.nvim", -- required
-      -- "dlyongemallo/diffview-plus.nvim", -- optional - Diff integration
-
-      -- Only one of these is needed.
-      "nvim-telescope/telescope.nvim", -- optional
-      "folke/snacks.nvim",             -- optional
+      "nvim-lua/plenary.nvim",
+      "folke/snacks.nvim",
     },
     keys = {
       { "<leader>ng", "<cmd>Neogit<cr>", desc = "Open neogit" }
