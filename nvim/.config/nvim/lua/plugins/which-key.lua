@@ -13,6 +13,7 @@ return {
 			{ "<leader>n", group = "neogit" },
 			{ "<leader>o", group = "outline / octo" },
 			{ "<leader>s", group = "session" },
+			{ "<leader>x", group = "trouble" },
 		},
 	},
 	keys = {

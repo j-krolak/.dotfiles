@@ -11,6 +11,9 @@
 | `<leader>fd` | diagnostics in the current file (picker) |
 | `<leader>fD` | diagnostics in the whole project (picker) |
 | `<leader>q` | file diagnostics to the location list |
+| `<leader>xx` | Trouble: workspace diagnostics panel |
+| `<leader>xb` | Trouble: current buffer diagnostics |
+| `<leader>xq` / `<leader>xl` | Trouble: quickfix / location list |
 
 Built into nvim 0.12: `<C-w>d` popup, `gra` code action, `grn` rename.
 

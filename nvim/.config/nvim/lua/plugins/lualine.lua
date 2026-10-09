@@ -22,6 +22,16 @@ return {
           },
         },
       },
+      sections = {
+        lualine_c = {
+          { "filename" },
+          {
+            "diagnostics",
+            sources = { "nvim_workspace_diagnostic" },
+            sections = { "error", "warn" },
+          },
+        },
+      },
     },
   },
 }
