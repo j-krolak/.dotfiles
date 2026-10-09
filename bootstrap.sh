@@ -17,7 +17,7 @@ omz=~/.oh-my-zsh/custom
 [ -d ~/.tmux/plugins/tpm ] || git clone --depth=1 https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 stow --restow --target="$HOME" anki claude fastfetch herdr hypr kitty nvim \
-	quickshell rofi scripts tmux yazi zotero zsh
+	quickshell rofi scripts tmux yazi zsh
 
 # voxtype/wayscriber/hyprpolkitagent left out: autostart.lua starts them, and
 # their units want graphical-session.target, never reached without uwsm.
@@ -29,6 +29,6 @@ sudo systemctl enable --now NetworkManager bluetooth
 cat <<'EOF'
 
 Set by hand: va_driver + VA-API package, monitors.lua outputs,
-Zotero profile dir name, wallpapers (gitignored).
+Wallpapers (gitignored).
 Then log in on TTY1.
 EOF

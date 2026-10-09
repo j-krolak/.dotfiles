@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hand-written, minimal schema for the .slnx solution format (no official XSD exists). -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="Solution">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="Configurations"/>
+        <xs:element ref="Properties"/>
+        <xs:element ref="Folder"/>
+        <xs:element ref="Project"/>
+        <xs:element ref="File"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Folder">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="File"/>
+        <xs:element ref="Project"/>
+        <xs:element ref="Properties"/>
+      </xs:choice>
+      <xs:attribute name="Name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Project">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="BuildType"/>
+        <xs:element ref="Platform"/>
+        <xs:element ref="Build"/>
+        <xs:element ref="Deploy"/>
+        <xs:element ref="Properties"/>
+        <xs:element ref="BuildDependency"/>
+      </xs:choice>
+      <xs:attribute name="Path" type="xs:string" use="required"/>
+      <xs:attribute name="Type" type="xs:string"/>
+      <xs:attribute name="Id" type="xs:string"/>
+      <xs:attribute name="DisplayName" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="File">
+    <xs:complexType>
+      <xs:attribute name="Path" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Configurations">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="BuildType"/>
+        <xs:element ref="Platform"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="BuildType">
+    <xs:complexType>
+      <xs:attribute name="Name" type="xs:string" use="required"/>
+      <xs:attribute name="Solution" type="xs:string"/>
+      <xs:attribute name="Project" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Platform">
+    <xs:complexType>
+      <xs:attribute name="Name" type="xs:string" use="required"/>
+      <xs:attribute name="Solution" type="xs:string"/>
+      <xs:attribute name="Project" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Build">
+    <xs:complexType>
+      <xs:attribute name="Solution" type="xs:string"/>
+      <xs:attribute name="Project" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Deploy">
+    <xs:complexType>
+      <xs:attribute name="Solution" type="xs:string"/>
+      <xs:attribute name="Project" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="BuildDependency">
+    <xs:complexType>
+      <xs:attribute name="Project" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Properties">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Property" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="Name" type="xs:string" use="required"/>
+            <xs:attribute name="Value" type="xs:string"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="Name" type="xs:string"/>
+      <xs:attribute name="Scope" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

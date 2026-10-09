@@ -28,6 +28,30 @@ return {
 				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" },
 			})
 
+			-- LemMinX gives completion/hover/validation for MSBuild XML (csproj, props, targets)
+			-- and .slnx. Schemas are local: SDK-style projects have no xmlns, so the upstream MSBuild
+			-- XSDs (which declare a targetNamespace) are vendored with the namespace stripped.
+			-- .slnx has no official XSD, so a minimal hand-written one is used.
+			-- https://github.com/redhat-developer/vscode-xml/blob/main/docs/Features/XMLFeatures.md
+			vim.filetype.add({ extension = { slnx = "xml", props = "xml", targets = "xml" } })
+			vim.lsp.config("lemminx", {
+				filetypes = { "xml", "xsd", "xsl", "xslt", "svg" },
+				settings = {
+					xml = {
+						fileAssociations = {
+							{
+								pattern = "**/*.{csproj,vbproj,fsproj,props,targets}",
+								systemId = "file://" .. vim.fn.stdpath("config") .. "/schemas/msbuild/Microsoft.Build.xsd",
+							},
+							{
+								pattern = "**/*.slnx",
+								systemId = "file://" .. vim.fn.stdpath("config") .. "/schemas/slnx.xsd",
+							},
+						},
+					},
+				},
+			})
+
 			-- mason-lspconfig only installs LSP servers; formatters go through the registry.
 			local registry = require("mason-registry")
 			registry.refresh(function()
@@ -40,7 +64,7 @@ return {
 			end)
 
 			require("mason-lspconfig").setup({
-				ensure_installed = { "ts_ls", "vue_ls", "clangd", "pyright", "eslint", "lua_ls", "html", "cssls" },
+				ensure_installed = { "ts_ls", "vue_ls", "clangd", "pyright", "eslint", "lua_ls", "html", "cssls", "lemminx" },
 				-- easy-dotnet.nvim ships its own Roslyn client ("easy_dotnet"); letting
 				-- mason-lspconfig also auto-enable the generic "roslyn_ls" server attaches
 				-- a second LSP client to C# buffers, doubling codelens (e.g. references count).
