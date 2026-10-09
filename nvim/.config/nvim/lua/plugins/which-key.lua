@@ -11,7 +11,7 @@ return {
 			{ "<leader>g", group = "git" },
 			{ "<leader>m", group = "markdown" },
 			{ "<leader>n", group = "neogit" },
-			{ "<leader>o", group = "outline / octo" },
+			{ "<leader>o", group = "outline" },
 			{ "<leader>s", group = "session" },
 			{ "<leader>x", group = "trouble" },
 		},

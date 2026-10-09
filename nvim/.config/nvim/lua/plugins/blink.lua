@@ -23,7 +23,6 @@ return {
 				end,
 			},
 
-			-- Keep completion/snippet navigation separate from Copilot suggestions.
 			['<Tab>'] = { 'select_and_accept', 'snippet_forward', 'fallback' },
 			['<S-Tab>'] = { 'snippet_backward', 'fallback' },
 			['<Down>'] = { 'select_next', 'fallback' },
