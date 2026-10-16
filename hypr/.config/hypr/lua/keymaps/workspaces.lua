@@ -44,7 +44,7 @@ for _, pair in ipairs(altShiftTargets) do
 	table.insert(keymaps, {
 		name   = "Move window to workspace " .. pair[2] .. " (silent)",
 		keymap = "ALT + CTRL + " .. pair[1],
-		action = hl.dsp.window.move({ workspace = pair[1], follow = false }),
+		action = hl.dsp.window.move({ workspace = pair[2], follow = false }),
 	})
 end
 

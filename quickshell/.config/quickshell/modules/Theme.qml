@@ -7,6 +7,7 @@ import QtQuick
 // same idea as the built-in `Hyprland` / `Pipewire` singletons you'll see
 // used in the other modules.
 QtObject {
+    readonly property color barBackground: "#000000"
     readonly property color background: "#9913101a"
     // Popups (OSD, notifications, calendar) float over arbitrary desktop
     // content rather than sitting on their own bar, so they need to be

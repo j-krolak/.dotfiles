@@ -2,12 +2,14 @@ import QtQuick
 import Quickshell.Hyprland
 
 // Mirrors waybar's "hyprland/workspaces" module in its simplest, classic
-// form: one small dot per workspace, same size throughout, just colored
-// differently for whichever one is active. Click a dot to switch to it.
+// form: one small Greek letter per workspace (α, β, γ, ...), colored
+// differently for whichever one is active. Click a letter to switch to it.
 // (Scroll-to-switch lives on the bar as a whole - see Bar.qml - not here,
-// since scrolling over these tiny dots specifically isn't the point.)
+// since scrolling over these letters specifically isn't the point.)
 Row {
     spacing: 4
+
+    readonly property var letters: ["α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ"]
 
     Repeater {
         // Hyprland.workspaces is a live list of HyprlandWorkspace objects,
@@ -20,8 +22,9 @@ Row {
         delegate: Item {
             id: wrapper
             required property var modelData
+            readonly property bool occupied: Hyprland.toplevels.values.some(t => t.workspace && t.workspace.id === modelData.id)
 
-            // The dot itself is tiny, so give the click/hover target a
+            // The letter is small, so give the click/hover target a
             // bit more breathing room around it. A fixed size here (not
             // "parent.height") matters: the Row this sits in has no
             // explicit height of its own, so it takes its height from
@@ -30,17 +33,23 @@ Row {
             implicitWidth: 16
             implicitHeight: Theme.fontSize + 6
 
-            Rectangle {
+            Text {
                 anchors.centerIn: parent
-                width: 7
-                height: width
-                radius: width / 2
-                color: wrapper.modelData.active ? Theme.accent
-                    : hoverArea.containsMouse ? Theme.foreground
-                    : Theme.muted
-                // Inactive, unhovered dots fade out further still, so the
-                // active one reads as clearly "the" workspace at a glance.
-                opacity: wrapper.modelData.active || hoverArea.containsMouse ? 1 : 0.4
+                text: wrapper.modelData.id >= 1 && wrapper.modelData.id <= letters.length
+                    ? letters[wrapper.modelData.id - 1]
+                    : wrapper.modelData.id
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.fontSize
+                color: wrapper.occupied ? Theme.foreground : Theme.muted
+                opacity: wrapper.occupied || wrapper.modelData.active ? 1 : 0.8
+            }
+
+            Rectangle {
+                visible: wrapper.modelData.active
+                anchors.fill: parent
+                anchors.topMargin: -4
+                anchors.bottomMargin: -4
+                color: "#407aa2f7"
             }
 
             MouseArea {

@@ -2,6 +2,7 @@ onboarding = false
 [ui]
 sidebar_collapsed_mode = "hidden"
 sidebar_start_collapsed = true
+tab_bar_position = "bottom"
 
 [keys]
 copy_mode = "prefix+["

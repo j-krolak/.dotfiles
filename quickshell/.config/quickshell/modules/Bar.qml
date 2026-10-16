@@ -160,7 +160,7 @@ PanelWindow {
     // each section does (below). Revealed still needs to win over
     // peekColor here, otherwise a low-battery/urgent hint bleeds through
     // as a full-width tint instead of just the thin peek strip.
-    color: bar.shown ? "transparent" : bar.peekColor
+    color: bar.shown ? Theme.barBackground : bar.peekColor
 
     // The actual modules only need to be visible/interactive once the
     // bar has opened back up. No margin here on purpose - the window's
@@ -185,15 +185,8 @@ PanelWindow {
         // child in here - a track title is unbounded in length and
         // wrapping it in the same chip would make the pill lurch wider
         // every time the song changes.
-        Rectangle {
+        Item {
           anchors.verticalCenter: parent.verticalCenter
-          topLeftRadius: 0
-          topRightRadius: 0
-          bottomLeftRadius: height / 2
-          bottomRightRadius: height / 2
-          color: Theme.background
-          border.color: Theme.pillBorder
-          border.width: 0
           width: leftPillRow.implicitWidth + Theme.modulePadding * 2
           height: bar.pillHeight
 
@@ -216,15 +209,8 @@ PanelWindow {
       }
 
       // modules-center
-      Rectangle {
+      Item {
         anchors.centerIn: parent
-        topLeftRadius: 0
-        topRightRadius: 0
-        bottomLeftRadius: height / 2
-        bottomRightRadius: height / 2
-        color: Theme.background
-        border.color: Theme.pillBorder
-        border.width: 0
         width: centerPillContent.implicitWidth + Theme.modulePadding * 2
         height: bar.pillHeight
 
@@ -236,17 +222,10 @@ PanelWindow {
       }
 
       // modules-right
-      Rectangle {
+      Item {
         anchors.right: parent.right
         anchors.rightMargin: Theme.barGap
         anchors.verticalCenter: parent.verticalCenter
-        topLeftRadius: 0
-        topRightRadius: 0
-        bottomLeftRadius: height / 2
-        bottomRightRadius: height / 2
-        color: Theme.background
-        border.color: Theme.pillBorder
-        border.width: 0
         width: rightPillRow.implicitWidth + Theme.modulePadding * 2
         height: bar.pillHeight
 
