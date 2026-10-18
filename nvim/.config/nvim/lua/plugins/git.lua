@@ -82,8 +82,6 @@ return {
       { "<leader>gh", "<cmd>CodeDiff history<cr>", desc = "CodeDiff: file history" },
     },
     opts = {
-      -- Moves default to DiffChange, which the theme keeps olive like inserts.
-      highlights = { line_move = "#264f78" },
       keymaps = {
         view = {
           next_file = "<Tab>",

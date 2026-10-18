@@ -5,13 +5,13 @@ return {
 		-- normal mode only; no popup in visual/select/operator-pending
 		triggers = { { "<auto>", mode = "n" } },
 		spec = {
+			{ "<leader>b", group = "buffer" },
 			{ "<leader>c", group = "code" },
-			{ "<leader>e", group = "explorer" },
 			{ "<leader>f", group = "find" },
 			{ "<leader>g", group = "git" },
+			{ "<leader>G", group = "github (octo)" },
 			{ "<leader>m", group = "markdown" },
 			{ "<leader>n", group = "neogit" },
-			{ "<leader>o", group = "outline / octo" },
 			{ "<leader>s", group = "session" },
 			{ "<leader>x", group = "trouble" },
 		},

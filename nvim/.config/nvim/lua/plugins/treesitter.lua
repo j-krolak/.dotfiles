@@ -25,19 +25,9 @@ return {
 	},
 	{
 		"nvim-treesitter/nvim-treesitter-context",
+		-- highlights come from catppuccin's treesitter_context integration
 		opts = {
 			multiline_threshold = 1, -- collapse each context to a single line (IDE-like)
 		},
-		config = function(_, opts)
-			require("treesitter-context").setup(opts)
-
-			local function set_hl()
-				vim.api.nvim_set_hl(0, "TreesitterContext", { link = "Normal" })
-				vim.api.nvim_set_hl(0, "TreesitterContextLineNumber", { link = "LineNr" })
-				vim.api.nvim_set_hl(0, "TreesitterContextBottom", { underline = true, sp = "#3c3c3c" })
-			end
-			set_hl()
-			vim.api.nvim_create_autocmd("ColorScheme", { callback = set_hl })
-		end,
 	}
 }

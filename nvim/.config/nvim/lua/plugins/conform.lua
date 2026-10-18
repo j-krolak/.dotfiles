@@ -1,5 +1,7 @@
 return {
   'stevearc/conform.nvim',
+  event = "BufWritePre",
+  cmd = "ConformInfo",
   keys = {
     {
       "<leader>cf",
@@ -25,8 +27,7 @@ return {
         yaml = { "prettier" },
         markdown = { "prettier" },
         astro = { "prettier" },
-        csharp = { "csharpier" },
-        xml = { "lemminx" },
+        cs = { "csharpier" },
         c = { "clang-format" },
         cpp = { "clang-format" },
       },

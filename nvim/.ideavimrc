@@ -24,6 +24,6 @@ sethandler <C-w> a:ide
 nnoremap <leader>z :action ToggleZenMode<CR>
 
 " Toggle tree view
-nnoremap <leader>ee :action ActivateProjectToolWindow<CR>
+nnoremap <leader>e :action ActivateProjectToolWindow<CR>
 sethandler <C-6> a:vim
 set number relativenumber
