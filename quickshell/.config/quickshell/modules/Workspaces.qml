@@ -30,7 +30,7 @@ Row {
             // explicit height of its own, so it takes its height from
             // its tallest child - binding back to "parent.height" would
             // make that circular and everything collapses to 0.
-            implicitWidth: 16
+            implicitWidth: 24
             implicitHeight: Theme.fontSize + 6
 
             Text {
@@ -38,18 +38,32 @@ Row {
                 text: wrapper.modelData.id >= 1 && wrapper.modelData.id <= letters.length
                     ? letters[wrapper.modelData.id - 1]
                     : wrapper.modelData.id
-                font.family: Theme.fontFamily
-                font.pixelSize: Theme.fontSize
+                font.family: Theme.serifFamily
+                font.pixelSize: Theme.fontSize + 1
                 color: wrapper.occupied ? Theme.foreground : Theme.muted
                 opacity: wrapper.occupied || wrapper.modelData.active ? 1 : 0.8
             }
 
             Rectangle {
                 visible: wrapper.modelData.active
-                anchors.fill: parent
-                anchors.topMargin: -4
-                anchors.bottomMargin: -4
-                color: "#407aa2f7"
+                anchors.centerIn: parent
+                width: 24
+                height: 24
+                color: "transparent"
+                border.color: "#4a68b0"
+                border.width: 1
+                opacity: 1
+            }
+
+            Rectangle {
+                visible: wrapper.modelData.active
+                anchors.centerIn: parent
+                width: 18
+                height: 18
+                color: "transparent"
+                border.color: "#4a68b0"
+                border.width: 1
+                opacity: 0.7
             }
 
             MouseArea {

@@ -100,8 +100,10 @@ PanelWindow {
       Math.min(TaskwarriorState.popupX, parent.width - width - Theme.barGap))
     width: 300
     height: layout.implicitHeight + 20
-    radius: 10
+    radius: 2
     color: Theme.popupBackground
+
+    GreekFrame {}
 
     // Swallows the click so it doesn't fall through to the full-screen
     // MouseArea behind the card and immediately close the popup.
@@ -153,7 +155,7 @@ PanelWindow {
             id: checkbox
             width: 12
             height: 12
-            radius: 3
+            radius: 0
             y: 2
             color: checkArea.pressed ? Theme.good : "transparent"
             border.color: doneProcess.running ? Theme.muted : Theme.good

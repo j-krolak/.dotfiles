@@ -45,8 +45,10 @@ PanelWindow {
       Math.min(NotificationsState.popupX, parent.width - width - Theme.barGap))
     width: 360
     height: layout.implicitHeight + 20
-    radius: 10
+    radius: 2
     color: Theme.popupBackground
+
+    GreekFrame {}
 
     // Swallows the click so it doesn't fall through to the full-screen
     // MouseArea behind the card and immediately close the panel.
@@ -125,7 +127,7 @@ PanelWindow {
 
               width: list.width
               height: rowContent.implicitHeight + 16
-              radius: 8
+              radius: 0
               color: rowArea.containsMouse ? Theme.hoverBackground : "transparent"
 
               // Same accent line as the toasts (NotificationPopups.qml),

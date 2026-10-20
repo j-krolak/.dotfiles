@@ -115,8 +115,10 @@ PanelWindow {
       Math.min(SystemStatsState.popupX, parent.width - width - Theme.barGap))
     width: 330
     height: layout.implicitHeight + 20
-    radius: 10
+    radius: 2
     color: Theme.popupBackground
+
+    GreekFrame {}
 
     // Swallows the click so it doesn't fall through to the full-screen
     // MouseArea behind the card and immediately close the popup.

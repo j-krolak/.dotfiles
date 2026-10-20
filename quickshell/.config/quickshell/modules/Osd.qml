@@ -90,8 +90,10 @@ PanelWindow {
 
   Rectangle {
     anchors.fill: parent
-    radius: 10
+    radius: 2
     color: Theme.popupBackground
+
+    GreekFrame {}
 
     Row {
       anchors.centerIn: parent

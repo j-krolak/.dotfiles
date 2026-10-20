@@ -219,6 +219,38 @@ PanelWindow {
           anchors.centerIn: parent
           anchors.verticalCenterOffset: bar.textCenterOffset
         }
+
+        Item {
+          anchors.right: parent.left
+          anchors.rightMargin: -6
+          width: extrasRow.implicitWidth + Theme.modulePadding * 2
+          height: bar.pillHeight
+
+          Row {
+            id: extrasRow
+            anchors.centerIn: parent
+            anchors.verticalCenterOffset: bar.textCenterOffset
+            spacing: 4
+
+            Stopwatch {
+              anchors.verticalCenter: parent.verticalCenter
+              opacity: swHover.hovered ? 1 : 0.35
+
+              HoverHandler {
+                id: swHover
+              }
+            }
+
+            Taskwarrior {
+              anchors.verticalCenter: parent.verticalCenter
+              opacity: taskHover.hovered ? 1 : 0.35
+
+              HoverHandler {
+                id: taskHover
+              }
+            }
+          }
+        }
       }
 
       // modules-right
@@ -234,10 +266,6 @@ PanelWindow {
           anchors.centerIn: parent
           anchors.verticalCenterOffset: bar.textCenterOffset
           spacing: 4
-
-          Taskwarrior {
-            anchors.verticalCenter: parent.verticalCenter
-          }
 
           Notifications {
             anchors.verticalCenter: parent.verticalCenter

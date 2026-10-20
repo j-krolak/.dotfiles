@@ -35,6 +35,7 @@ ShellRoot {
   NotificationPopups {}
   Calendar {}
   TaskwarriorOverview {}
+  StopwatchOverview {}
   SystemStatsOverview {}
   WallpaperPickerOverview {}
   BatteryOverview {}

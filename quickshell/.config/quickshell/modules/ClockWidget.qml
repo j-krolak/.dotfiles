@@ -16,7 +16,7 @@ Text {
         precision: SystemClock.Minutes
     }
 
-		text: Qt.formatDateTime(clock.date, "dddd HH:mm")
+    text: Qt.formatDateTime(clock.date, "HH:mm")
 
     MouseArea {
         anchors.fill: parent

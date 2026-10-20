@@ -130,8 +130,10 @@ PanelWindow {
     anchors.rightMargin: Theme.barGap
     width: Math.max(220, layout.implicitWidth + 24)
     height: layout.implicitHeight + 20
-    radius: 10
+    radius: 2
     color: Theme.popupBackground
+
+    GreekFrame {}
 
     // Swallows the click so it doesn't fall through to the full-screen
     // MouseArea behind the card and immediately close the popup.
@@ -255,7 +257,7 @@ PanelWindow {
           id: hibernateButton
           width: hibernateLabel.implicitWidth + 40
           height: 34
-          radius: 8
+          radius: 0
           color: hibernateArea.containsMouse ? Theme.hoverBackground : "transparent"
           border.color: "#80ffffff"
           border.width: 1
@@ -282,7 +284,7 @@ PanelWindow {
           id: shutdownButton
           width: shutdownLabel.implicitWidth + 40
           height: 34
-          radius: 8
+          radius: 0
           color: shutdownArea.containsMouse ? Theme.hoverBackground : "transparent"
           border.color: "#80ffffff"
           border.width: 1

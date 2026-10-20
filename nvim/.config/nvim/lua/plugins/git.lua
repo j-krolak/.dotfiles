@@ -58,6 +58,7 @@ return {
   },
   {
     "esmuellert/codediff.nvim",
+    dir = "~/projects/open-source/codediff.nvim",
     cmd = "CodeDiff",
     keys = {
       {

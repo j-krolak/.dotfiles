@@ -37,6 +37,8 @@ PanelWindow {
   property int viewYear: now.getFullYear()
   property int viewMonth: now.getMonth() // 0 = January
 
+  readonly property var months: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάιος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"]
+
   function daysInMonth(y, m) {
     return new Date(y, m + 1, 0).getDate()
   }
@@ -74,8 +76,10 @@ PanelWindow {
     anchors.topMargin: 5
     width: 220
     height: layout.implicitHeight + 20
-    radius: 10
+    radius: 2
     color: Theme.popupBackground
+
+    GreekFrame {}
 
     // Swallows the click so it doesn't fall through to the full-screen
     // MouseArea behind the card and immediately close the calendar.
@@ -106,9 +110,9 @@ PanelWindow {
         Text {
           width: parent.width - 48
           horizontalAlignment: Text.AlignHCenter
-          text: new Date(viewYear, viewMonth, 1).toLocaleDateString(Qt.locale(), "MMMM yyyy")
-          color: Theme.foreground
-          font.family: Theme.fontFamily
+          text: months[viewMonth] + " " + viewYear
+          color: Theme.accent
+          font.family: Theme.serifFamily
           font.pixelSize: Theme.fontSize
           font.bold: true
         }
@@ -129,14 +133,14 @@ PanelWindow {
         columns: 7
 
         Repeater {
-          model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+          model: ["Δε", "Τρ", "Τε", "Πε", "Πα", "Σα", "Κυ"]
           delegate: Text {
             required property string modelData
             width: layout.width / 7
             horizontalAlignment: Text.AlignHCenter
             text: modelData
             color: Theme.muted
-            font.family: Theme.fontFamily
+            font.family: Theme.serifFamily
             font.pixelSize: Theme.fontSize - 2
           }
         }
@@ -167,7 +171,7 @@ PanelWindow {
               anchors.centerIn: parent
               width: 22
               height: 22
-              radius: 11
+              radius: 0
               color: parent.isToday ? Theme.accent : "transparent"
             }
 

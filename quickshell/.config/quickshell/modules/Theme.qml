@@ -30,6 +30,8 @@ QtObject {
     readonly property color hoverBackground: "#1affffff"
 
     readonly property string fontFamily: "MesloLGS Nerd Font"
+    // Serif with full polytonic Greek coverage, for the classical elements.
+    readonly property string serifFamily: "Noto Serif"
     readonly property int fontSize: 13
 
     readonly property int barHeight: 24
