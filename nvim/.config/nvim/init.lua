@@ -20,8 +20,6 @@ vim.wo.signcolumn = "yes"
 vim.opt.list = true
 vim.opt.listchars = vim.opt.listchars + "space:·"
 
-vim.lsp.inlay_hint.enable(true)
-
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true

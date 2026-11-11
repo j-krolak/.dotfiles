@@ -8,7 +8,7 @@ command -v paru >/dev/null && paru -S --needed - < packages/aur.txt
 # tmux.conf loads tpm from ~/.tmux, not ~/.config/tmux.
 [ -d ~/.tmux/plugins/tpm ] || git clone --depth=1 https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
-stow --restow --target="$HOME" anki claude fastfetch fish herdr hypr kitty nvim \
+stow --restow --target="$HOME" anki claude fastfetch fish herdr ghostty hypr nvim \
 	quickshell rofi scripts tmux yazi
 
 # voxtype/wayscriber/hyprpolkitagent left out: autostart.lua starts them, and

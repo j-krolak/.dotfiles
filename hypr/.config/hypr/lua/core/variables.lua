@@ -16,7 +16,7 @@ return {
   },
 
   programs = {
-    terminal = "kitty",
+    terminal = "ghostty",
     browser  = "zen-browser",
     editor   = "code",
     files    = "dolphin",

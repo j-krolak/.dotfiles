@@ -54,7 +54,7 @@ hyprpicker
 hyprpolkitagent
 imagemagick
 jq
-kitty
+ghostty
 lazygit
 less
 libva-utils

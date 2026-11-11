@@ -5,15 +5,11 @@ return {
   keys = {
     { "-", "<cmd>Oil<CR>", silent = true, desc = "Open parent directory (Oil)" },
     {
-      "<leader>-",
+      "<leader>fe",
       function()
-        if vim.bo.filetype == "oil" then
-          require("oil").close()
-        else
-          require("oil").open()
-        end
+        require("oil").toggle_float()
       end,
-      desc = "Toggle Oil",
+      desc = "Toggle file explorer",
     },
   },
   opts = {
@@ -28,6 +24,10 @@ return {
         end,
       },
     },
+    float = {
+      border = "rounded",
+    },
+    columns = { "icon", "permissions" },
     default_file_explorer = true,
     delete_to_trash = true,
     view_options = {

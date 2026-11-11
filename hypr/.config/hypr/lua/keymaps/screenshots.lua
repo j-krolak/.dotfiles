@@ -48,6 +48,6 @@ return {
 	{
 		name = "clipse",
 		keymap = "SUPER + V",
-		action = hl.exec("[float; size 622 652] kitty --class clipse -e clipse")
+		action = hl.exec("[float; size 622 652] ghostty --class=clipse -e clipse")
 	}
 }
