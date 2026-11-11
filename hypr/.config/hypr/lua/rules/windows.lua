@@ -20,3 +20,12 @@ hl.window_rule({
 	match = { pin = true },
 	border_color = "#3994bc",
 })
+
+-- Clients (kitty, ...) sometimes ask to be maximized on map; honoring it makes
+-- the first window on a workspace cover the whole area, so later windows
+-- tile behind it instead of splitting.
+hl.window_rule({
+	name  = "suppress-maximize",
+	match = { class = ".*" },
+	suppress_event = "maximize",
+})

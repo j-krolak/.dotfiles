@@ -31,3 +31,12 @@ hl.layer_rule({
     blur = true,
     ignore_alpha = 0.2,
 })
+
+-- The widgets side panel slides itself in from the right (QML animation);
+-- Hyprland's layer popin on the full-screen surface would fight with it.
+hl.layer_rule({
+    match = { namespace = "quickshell:widgets" },
+    blur = true,
+    ignore_alpha = 0.03,
+    no_anim = true,
+})

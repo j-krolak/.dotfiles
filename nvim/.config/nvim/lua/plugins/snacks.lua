@@ -19,7 +19,11 @@ return {
 		words = { enabled = true },
 		zen = { toggles = { dim = false } },
 		styles = {
-			zen = { width = 160 },
+			zen = {
+				width = 120,
+				backdrop = { transparent = true },
+				wo = { signcolumn = "no", number = false },
+			},
 			float_term = {
 				position = "float",
 				border = "rounded",
@@ -51,6 +55,7 @@ return {
 		{ "<leader>bd", function() Snacks.bufdelete() end, desc = "Delete buffer (keep window)" },
 		{ "<leader>bo", function() Snacks.bufdelete.other() end, desc = "Delete other buffers" },
 		{ "<leader>z", function() Snacks.zen() end, desc = "Toggle Zen Mode" },
+		{ "<leader>Z", function() Snacks.zen.zoom() end, desc = "Toggle Zoom" },
 		{ "]]", function() Snacks.words.jump(vim.v.count1) end, desc = "Next reference" },
 		{ "[[", function() Snacks.words.jump(-vim.v.count1) end, desc = "Prev reference" },
 		{

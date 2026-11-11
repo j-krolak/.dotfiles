@@ -80,9 +80,13 @@ return {
         end,
         desc = "CodeDiff: toggle",
       },
-      { "<leader>gh", "<cmd>CodeDiff history<cr>", desc = "CodeDiff: file history" },
+      { "<leader>gh", "<cmd>CodeDiff history origin/main...HEAD --reverse<cr>", desc = "CodeDiff: file history" },
     },
     opts = {
+      history = {
+        position = "left",
+        viemMode = "tree"
+      },
       keymaps = {
         view = {
           next_file = "<Tab>",

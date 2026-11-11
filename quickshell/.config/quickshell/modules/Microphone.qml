@@ -2,10 +2,11 @@ import QtQuick
 import Quickshell.Services.Pipewire
 
 // Like Volume.qml but for the default source: shows a mic icon, click to mute.
-Text {
+StatusItem {
     id: root
 
     readonly property PwNode source: Pipewire.defaultAudioSource
+    readonly property bool muted: !source || !source.ready || source.audio.muted
 
     // Tracking the node tells Quickshell to keep its volume/mute state
     // (source.audio) actively bound instead of a one-off snapshot.
@@ -13,33 +14,18 @@ Text {
         objects: root.source ? [root.source] : []
     }
 
-    color: (source && source.audio.muted) ? Theme.muted : Theme.foreground
-    font.family: Theme.fontFamily
-    font.pixelSize: Theme.fontSize
-    leftPadding: Theme.modulePadding
-    rightPadding: Theme.modulePadding
+    tint: muted ? Theme.barMuted : Theme.barForeground
+    icon: muted ? "microphone-sensitivity-muted-symbolic" : "microphone-sensitivity-high-symbolic"
+    label: !source || !source.ready ? "--%" : source.audio.muted ? "muted" : Math.round(source.audio.volume * 100) + "%"
 
-    text: {
-        if (!source || !source.ready)
-            return "󰍭 --%"
-        if (source.audio.muted)
-            return "󰍭 muted"
-        return "󰍬 " + Math.round(source.audio.volume * 100) + "%"
+    onClicked: {
+        if (source)
+            source.audio.muted = !source.audio.muted
     }
-
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.LeftButton
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            if (root.source)
-                root.source.audio.muted = !root.source.audio.muted
-        }
-        onWheel: wheel => {
-            if (!root.source)
-                return
-            const step = wheel.angleDelta.y > 0 ? 0.05 : -0.05
-            root.source.audio.volume = Math.max(0, Math.min(1, root.source.audio.volume + step))
-        }
+    onWheel: e => {
+        if (!source)
+            return
+        const step = e.angleDelta.y > 0 ? 0.05 : -0.05
+        source.audio.volume = Math.max(0, Math.min(1, source.audio.volume + step))
     }
 }

@@ -17,7 +17,7 @@ PanelWindow {
   }
   exclusiveZone: 0
   color: "transparent"
-  // Same namespace Calendar.qml/TaskwarriorOverview.qml/SystemStatsOverview.qml
+  // Same namespace Calendar.qml
   // use - matched by a Hyprland layer rule that blurs it.
   Component.onCompleted: {
     if (this.WlrLayershell != null) {
@@ -78,7 +78,17 @@ PanelWindow {
   readonly property bool healthKnown: (device && device.healthSupported) || fallbackHealthPercent >= 0
   readonly property real healthPercent: (device && device.healthSupported) ? device.healthPercentage : fallbackHealthPercent
 
-  onVisibleChanged: if (visible) listDevicesProcess.running = true
+  onVisibleChanged: {
+
+    if (visible) {
+
+      PopupManager.closeAll("Battery")
+
+      if (visible) listDevicesProcess.running = true
+
+    }
+
+  }
 
   // UPower reports these in seconds, and leaves whichever one doesn't
   // apply to the current state at 0.
@@ -122,18 +132,16 @@ PanelWindow {
     id: card
     anchors.top: parent.top
     anchors.right: parent.right
-    anchors.topMargin: 5
+    anchors.topMargin: Theme.barGap + 1
     // Battery is always the last (rightmost) icon in the bar, so unlike
-    // Taskwarrior/SystemStats this doesn't need to track a click-reported
+    // the other popups this doesn't need to track a click-reported
     // popupX - it can just hug the screen's right edge directly, at the
     // same inset as the bar's own right-section pill.
     anchors.rightMargin: Theme.barGap
     width: Math.max(220, layout.implicitWidth + 24)
     height: layout.implicitHeight + 20
-    radius: 2
-    color: Theme.popupBackground
-
-    GreekFrame {}
+    radius: Theme.popupRadius
+    color: Theme.popupGlass
 
     // Swallows the click so it doesn't fall through to the full-screen
     // MouseArea behind the card and immediately close the popup.
@@ -164,7 +172,7 @@ PanelWindow {
             width: 22
             height: 6
             radius: 2
-            color: "white"
+            color: Theme.popupText
           }
 
           Rectangle {
@@ -173,7 +181,7 @@ PanelWindow {
             height: 100
             radius: 8
             color: "transparent"
-            border.color: "white"
+            border.color: Theme.popupText
             border.width: 2
 
             Rectangle {
@@ -183,13 +191,13 @@ PanelWindow {
               anchors.margins: 5
               height: Math.max(0, (parent.height - 10) * (percent / 100))
               radius: 4
-              color: charging ? Theme.good : (percent <= 15 ? Theme.urgent : Theme.accent)
+              color: charging ? "#1b7f3b" : (percent <= 15 ? Theme.popupUrgent : Theme.popupAccent)
             }
 
             Text {
               anchors.centerIn: parent
               text: device ? Math.round(percent) + "%" : "--"
-              color: Theme.foreground
+              color: Theme.popupText
               font.family: Theme.fontFamily
               font.pixelSize: Theme.fontSize - 2
               font.bold: true
@@ -204,7 +212,7 @@ PanelWindow {
           Text {
             visible: charging
             text: "Charging"
-            color: Theme.good
+            color: Theme.popupGood
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSize - 1
           }
@@ -212,7 +220,7 @@ PanelWindow {
           Text {
             visible: timeText.length > 0
             text: timeText
-            color: Theme.muted
+            color: Theme.popupText
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSize - 1
           }
@@ -226,7 +234,7 @@ PanelWindow {
           Text {
             visible: device && device.energyCapacity > 0
             text: device ? "Capacity: " + device.energyCapacity.toFixed(1) + " Wh" : ""
-            color: Theme.muted
+            color: Theme.popupText
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSize - 1
           }
@@ -235,7 +243,7 @@ PanelWindow {
             visible: healthKnown
             text: "Health: " + Math.round(healthPercent) + "% ("
               + Math.round(100 - healthPercent) + "% degraded)"
-            color: healthPercent < 80 ? Theme.warning : Theme.muted
+            color: Theme.popupText
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSize - 1
           }
@@ -243,7 +251,7 @@ PanelWindow {
           Text {
             visible: chargeCycles >= 0
             text: "Charge cycles: " + chargeCycles
-            color: Theme.muted
+            color: Theme.popupText
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSize - 1
           }
@@ -257,16 +265,16 @@ PanelWindow {
           id: hibernateButton
           width: hibernateLabel.implicitWidth + 40
           height: 34
-          radius: 0
-          color: hibernateArea.containsMouse ? Theme.hoverBackground : "transparent"
-          border.color: "#80ffffff"
+          radius: 6
+          color: hibernateArea.containsMouse ? Theme.popupHover : "transparent"
+          border.color: Theme.popupLine
           border.width: 1
 
           Text {
             id: hibernateLabel
             anchors.centerIn: parent
             text: "⏾  Hibernate"
-            color: Theme.foreground
+            color: Theme.popupText
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSize - 1
           }
@@ -284,16 +292,16 @@ PanelWindow {
           id: shutdownButton
           width: shutdownLabel.implicitWidth + 40
           height: 34
-          radius: 0
-          color: shutdownArea.containsMouse ? Theme.hoverBackground : "transparent"
-          border.color: "#80ffffff"
+          radius: 6
+          color: shutdownArea.containsMouse ? Theme.popupHover : "transparent"
+          border.color: Theme.popupLine
           border.width: 1
 
           Text {
             id: shutdownLabel
             anchors.centerIn: parent
             text: "⏻  Shut Down"
-            color: Theme.urgent
+            color: Theme.popupUrgent
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSize - 1
           }

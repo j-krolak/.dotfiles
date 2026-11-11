@@ -85,7 +85,17 @@ PanelWindow {
     queryProcess.running = true
   }
 
-  onVisibleChanged: if (visible) {
+  onVisibleChanged: {
+
+    if (visible) {
+
+      PopupManager.closeAll("Wallpaper")
+
+      if (visible) {
+
+    }
+
+  }
     refresh()
     keyHandler.forceActiveFocus()
   }
@@ -149,6 +159,7 @@ PanelWindow {
   function applyWallpaper(path) {
     applyProcess.command = ["awww", "img", path, "--transition-type", "random"]
     applyProcess.running = true
+    WallpaperTone.analyze(path)
     WallpaperState.visible = false
   }
 

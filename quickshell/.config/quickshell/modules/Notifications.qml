@@ -3,29 +3,21 @@ import QtQuick
 // Bell + pending count for the bar. Goes muted and countless when there's
 // nothing waiting; click to open the history panel
 // (modules/NotificationsOverview.qml, its own window).
-Text {
+StatusItem {
     id: root
 
     readonly property int count: NotificationsState.count
 
-    color: {
-        if (count === 0) return Theme.muted
-        if (NotificationsState.hasCritical) return Theme.urgent
-        return Theme.accent
+    tint: {
+        if (count === 0) return Theme.barMuted
+        if (NotificationsState.hasCritical) return Theme.barUrgent
+        return Theme.barAccent
     }
-    font.family: Theme.fontFamily
-    font.pixelSize: Theme.fontSize
-    leftPadding: Theme.modulePadding
-    rightPadding: Theme.modulePadding
+    icon: count > 0 ? "notification-new-symbolic" : "notification-symbolic"
+    label: count > 0 ? String(count) : ""
 
-    text: count > 0 ? "󰂚 " + count : "󰂜"
-
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            NotificationsState.popupX = root.mapToItem(null, 0, root.height).x
-            NotificationsState.visible = !NotificationsState.visible
-        }
+    onClicked: {
+        NotificationsState.popupX = root.mapToItem(null, 0, root.height).x
+        NotificationsState.visible = !NotificationsState.visible
     }
 }

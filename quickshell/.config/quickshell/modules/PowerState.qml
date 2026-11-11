@@ -1,7 +1,7 @@
 pragma Singleton
 import QtQuick
 
-// Same trick as BatteryState/CalendarState/TaskwarriorState: the bar widget
+// Same trick as BatteryState/CalendarState: the bar widget
 // (Battery.qml, on desktops with no battery) and the popup
 // (PowerOverview.qml, its own top-level window under shell.qml's ShellRoot)
 // are independent windows with no parent/child relationship, so a shared

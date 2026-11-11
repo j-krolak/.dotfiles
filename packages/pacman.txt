@@ -35,6 +35,7 @@ fastfetch
 fd
 ffmpegthumbs
 firefox
+fish
 fluent-gtk-theme
 fzf
 git
@@ -88,6 +89,7 @@ qt6-wayland
 quickshell
 rider
 rofi
+rofi-calc
 sassc
 slurp
 snap-pac
@@ -117,4 +119,3 @@ yt-dlp-git
 zed
 zen-browser-bin
 zoxide
-zsh

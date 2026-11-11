@@ -40,7 +40,7 @@ PanelWindow {
   // animation.
   Component.onCompleted: {
     if (this.WlrLayershell != null) {
-      this.WlrLayershell.namespace = "quickshell:blur"
+      this.WlrLayershell.namespace = "quickshell:bar"
     }
   }
 
@@ -68,7 +68,7 @@ PanelWindow {
   // descent 3.7px at this size), so vertically centering the raw Text
   // bounding box leaves visibly more room above the glyphs than below.
   // This nudges the visual center up to compensate.
-  readonly property int textCenterOffset: -2
+  readonly property int textCenterOffset: 0
 
   // Whether the mouse is actually over the bar right now - used below to
   // tell the difference between "hidden because you moved the mouse
@@ -79,7 +79,7 @@ PanelWindow {
   // matched set even though their contents (workspace dots vs. plain
   // text) aren't naturally the same height - tallest content plus a
   // little breathing room on top/bottom, same idea as the pills' width.
-  readonly property int pillHeight: Math.max(leftPillRow.implicitHeight, centerPillContent.implicitHeight, rightPillRow.implicitHeight) + Theme.modulePaddingY * 2
+  readonly property int pillHeight: Math.max(leftPillRow.implicitHeight, rightPillRow.implicitHeight) + Theme.modulePaddingY * 2
 
   // Small delay before hiding again so briefly crossing the bar while
   // moving the mouse elsewhere doesn't cause it to flicker shut. This is
@@ -93,6 +93,8 @@ PanelWindow {
   MouseArea {
     anchors.fill: parent
     hoverEnabled: true
+    // Clicking empty bar space dismisses any open popup.
+    onPressed: PopupManager.closeAll(null)
     onEntered: {
       bar.hovering = true
       hideTimer.stop()
@@ -194,63 +196,111 @@ PanelWindow {
             id: leftPillRow
             anchors.centerIn: parent
             anchors.verticalCenterOffset: bar.textCenterOffset
-            spacing: 4
+            spacing: 10
 
-                    Workspaces {
+            Text {
               anchors.verticalCenter: parent.verticalCenter
+              text: "\uf303"
+              color: Theme.barForeground
+              font.family: Theme.fontFamily
+              font.pixelSize: Theme.fontSize + 2
+              height: Theme.fontSize + 7
+              verticalAlignment: Text.AlignVCenter
+            }
+
+            Text {
+              id: appLabel
+              anchors.verticalCenter: parent.verticalCenter
+              // Hyprland's "activewindow>>class,title" event fires on every focus
+              // change (empty when nothing is focused). toplevel.lastIpcObject is
+              // only a snapshot refreshed on demand, so it lagged behind and
+              // kept showing the previous window.
+              property string cls: ""
+              // "org.gnome.Nautilus" -> "Nautilus", "zen" -> "Zen"
+              readonly property string appName: {
+                const last = cls.split(".").pop()
+                return last.length > 0 ? last.charAt(0).toUpperCase() + last.slice(1) : "Desktop"
+              }
+              text: appName
+
+              // Terminal apps put spinner glyphs (✳, ⠋ ...) at the start of the title.
+              // A fallback font draws them with different line metrics, which pushes
+              // a shared line off-center, so they get their own fixed-height item
+              // (titleIcon) and the rest of the title stays in the normal font.
+              function setTitle(t) {
+                const m = t.match(/^([\u2190-\u2BFF\u2800-\u28FF])\s*(.*)$/)
+                titleIcon.text = m ? m[1] : ""
+                windowTitle.text = m ? m[2] : t
+              }
+
+              Connections {
+                target: Hyprland
+                function onRawEvent(event) {
+                  if (event.name === "activewindow") {
+                    const i = event.data.indexOf(",")
+                    appLabel.cls = i < 0 ? event.data : event.data.slice(0, i)
+                    appLabel.setTitle(i < 0 ? "" : event.data.slice(i + 1))
+                  } else if (event.name === "windowtitlev2") {
+                    // "address,title" - keeps the title live (e.g. browser tab changes)
+                    const j = event.data.indexOf(",")
+                    if (Hyprland.activeToplevel && event.data.slice(0, j) === Hyprland.activeToplevel.address.replace("0x", ""))
+                      appLabel.setTitle(event.data.slice(j + 1))
+                  }
+                }
+              }
+
+              Component.onCompleted: {
+                const t = Hyprland.activeToplevel
+                if (t && t.lastIpcObject && t.lastIpcObject["class"])
+                  cls = t.lastIpcObject["class"]
+              }
+              color: Theme.barForeground
+              font.family: Theme.fontFamily
+              font.pixelSize: Theme.fontSize
+              font.bold: true
+              height: Theme.fontSize + 7
+              verticalAlignment: Text.AlignVCenter
+              elide: Text.ElideRight
+              width: Math.min(implicitWidth, 200)
+            }
+
+            Text {
+              id: titleIcon
+              anchors.verticalCenter: parent.verticalCenter
+              visible: text.length > 0
+              color: Theme.barMuted
+              font.family: Theme.fontFamily
+              font.pixelSize: Theme.fontSize
+              height: Theme.fontSize + 7
+              lineHeightMode: Text.FixedHeight
+              lineHeight: height
+              verticalAlignment: Text.AlignVCenter
+            }
+
+            Text {
+              id: windowTitle
+              anchors.verticalCenter: parent.verticalCenter
+              visible: text.length > 0 && text !== appLabel.appName
+              color: Theme.barMuted
+              font.family: Theme.fontFamily
+              font.pixelSize: Theme.fontSize
+              // Fixed height: fallback glyphs in a title (emoji, symbols) would
+              // otherwise make this line taller and shift its text off-center.
+              height: Theme.fontSize + 7
+              lineHeightMode: Text.FixedHeight
+              lineHeight: height
+              verticalAlignment: Text.AlignVCenter
+              elide: Text.ElideRight
+              width: Math.min(implicitWidth, 320)
             }
           }
-        }
-
-        NowPlaying {
-          anchors.verticalCenter: parent.verticalCenter
-          anchors.verticalCenterOffset: bar.textCenterOffset
         }
       }
 
       // modules-center
-      Item {
+      Workspaces {
         anchors.centerIn: parent
-        width: centerPillContent.implicitWidth + Theme.modulePadding * 2
-        height: bar.pillHeight
-
-        ClockWidget {
-          id: centerPillContent
-          anchors.centerIn: parent
-          anchors.verticalCenterOffset: bar.textCenterOffset
-        }
-
-        Item {
-          anchors.right: parent.left
-          anchors.rightMargin: -6
-          width: extrasRow.implicitWidth + Theme.modulePadding * 2
-          height: bar.pillHeight
-
-          Row {
-            id: extrasRow
-            anchors.centerIn: parent
-            anchors.verticalCenterOffset: bar.textCenterOffset
-            spacing: 4
-
-            Stopwatch {
-              anchors.verticalCenter: parent.verticalCenter
-              opacity: swHover.hovered ? 1 : 0.35
-
-              HoverHandler {
-                id: swHover
-              }
-            }
-
-            Taskwarrior {
-              anchors.verticalCenter: parent.verticalCenter
-              opacity: taskHover.hovered ? 1 : 0.35
-
-              HoverHandler {
-                id: taskHover
-              }
-            }
-          }
-        }
+        anchors.verticalCenterOffset: bar.textCenterOffset
       }
 
       // modules-right
@@ -265,13 +315,25 @@ PanelWindow {
           id: rightPillRow
           anchors.centerIn: parent
           anchors.verticalCenterOffset: bar.textCenterOffset
-          spacing: 4
+          spacing: 8
 
-          Notifications {
+          RecordingIndicator {
             anchors.verticalCenter: parent.verticalCenter
           }
 
-          SystemStats {
+          ScreenShareIndicator {
+            anchors.verticalCenter: parent.verticalCenter
+          }
+
+          Markets {
+            anchors.verticalCenter: parent.verticalCenter
+          }
+
+          Agents {
+            anchors.verticalCenter: parent.verticalCenter
+          }
+
+          Notifications {
             anchors.verticalCenter: parent.verticalCenter
           }
 
@@ -292,6 +354,15 @@ PanelWindow {
           }
 
           Battery {
+            anchors.verticalCenter: parent.verticalCenter
+          }
+
+          MediaControls {
+            anchors.verticalCenter: parent.verticalCenter
+          }
+
+          ClockWidget {
+            id: centerPillContent
             anchors.verticalCenter: parent.verticalCenter
           }
         }

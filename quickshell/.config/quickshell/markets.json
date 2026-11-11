@@ -1,0 +1,96 @@
+{
+  "quote": "PLN",
+  "tabs": [
+    {
+      "id": "stocks",
+      "label": "Stocks",
+      "type": "yahoo",
+      "items": [
+        "NVDA",
+        "AAPL",
+        "MSFT",
+        "GOOGL",
+        "AMZN",
+        "META",
+        "TSLA",
+        "AMD"
+      ]
+    },
+    {
+      "id": "indices",
+      "label": "Indices",
+      "type": "yahoo",
+      "currency": "",
+      "items": [
+        {
+          "s": "^GSPC",
+          "n": "S&P 500"
+        },
+        {
+          "s": "^IXIC",
+          "n": "Nasdaq"
+        },
+        {
+          "s": "^DJI",
+          "n": "Dow Jones"
+        },
+        {
+          "s": "^GDAXI",
+          "n": "DAX"
+        },
+        {
+          "s": "WIG20.WA",
+          "n": "WIG20"
+        }
+      ]
+    },
+    {
+      "id": "goods",
+      "label": "Goods",
+      "type": "yahoo",
+      "items": [
+        {
+          "s": "GC=F",
+          "n": "Gold"
+        },
+        {
+          "s": "SI=F",
+          "n": "Silver"
+        },
+        {
+          "s": "CL=F",
+          "n": "Crude oil"
+        },
+        {
+          "s": "NG=F",
+          "n": "Natural gas"
+        }
+      ]
+    },
+    {
+      "id": "crypto",
+      "label": "Crypto",
+      "type": "yahoo",
+      "suffix": "-USD",
+      "items": [
+        "BTC",
+        "ETH",
+        "SOL",
+        "XRP",
+        "DOGE"
+      ]
+    },
+    {
+      "id": "fx",
+      "label": "FX",
+      "type": "fx",
+      "items": [
+        "USD",
+        "EUR",
+        "GBP",
+        "CHF",
+        "CZK"
+      ]
+    }
+  ]
+}

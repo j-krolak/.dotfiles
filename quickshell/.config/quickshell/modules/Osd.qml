@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell // for PanelWindow
 import Quickshell.Io
+import Quickshell.Wayland
 import Quickshell.Services.Pipewire
 
 // A small popup that flashes on screen for volume/brightness changes -
@@ -20,8 +21,15 @@ PanelWindow {
   exclusiveZone: 0
   color: "transparent"
 
-  implicitWidth: 220
-  implicitHeight: 48
+  implicitWidth: 200
+  implicitHeight: 44
+
+  // Same blurred-glass namespace as the popups (see hypr rules/layers.lua).
+  Component.onCompleted: {
+    if (this.WlrLayershell != null) {
+      this.WlrLayershell.namespace = "quickshell:blur"
+    }
+  }
 
   property bool shown: false
   // "volume" or "brightness" - which one triggered the most recent flash.
@@ -90,10 +98,8 @@ PanelWindow {
 
   Rectangle {
     anchors.fill: parent
-    radius: 2
-    color: Theme.popupBackground
-
-    GreekFrame {}
+    radius: height / 2
+    color: Theme.popupGlass
 
     Row {
       anchors.centerIn: parent
@@ -104,7 +110,7 @@ PanelWindow {
         text: osd.mode === "volume"
           ? (osd.muted ? "󰝟" : "󰕾")
           : "󰃟"
-        color: Theme.foreground
+        color: Theme.popupText
         font.family: Theme.fontFamily
         font.pixelSize: Theme.fontSize + 4
       }
@@ -115,13 +121,13 @@ PanelWindow {
         width: 130
         height: 6
         radius: height / 2
-        color: Theme.muted
+        color: Theme.popupLine
 
         Rectangle {
           width: track.width * Math.max(0, Math.min(1, osd.percent / 100))
           height: track.height
           radius: track.radius
-          color: Theme.accent
+          color: Theme.popupText
         }
       }
     }

@@ -3,7 +3,7 @@ import Quickshell.Bluetooth
 
 // No waybar equivalent for this one - nothing showed Bluetooth status
 // before. Click to power the adapter on/off.
-Text {
+StatusItem {
     id: root
 
     readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
@@ -13,24 +13,12 @@ Text {
 
     visible: adapter !== null
 
-    color: (adapter && adapter.enabled) ? Theme.foreground : Theme.muted
-    font.family: Theme.fontFamily
-    font.pixelSize: Theme.fontSize
-    leftPadding: Theme.modulePadding
-    rightPadding: Theme.modulePadding
+    tint: (adapter && adapter.enabled) ? Theme.barForeground : Theme.barMuted
+    icon: (adapter && adapter.enabled) ? "bluetooth-active-symbolic" : "bluetooth-disabled-symbolic"
+    label: connectedCount > 0 ? String(connectedCount) : ""
 
-    text: {
-        if (!adapter || !adapter.enabled)
-            return "󰂲"
-        return connectedCount > 0 ? "󰂱 " + connectedCount : "󰂯"
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            if (root.adapter)
-                root.adapter.enabled = !root.adapter.enabled
-        }
+    onClicked: {
+        if (adapter)
+            adapter.enabled = !adapter.enabled
     }
 }

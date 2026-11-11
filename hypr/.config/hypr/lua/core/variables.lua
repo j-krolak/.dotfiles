@@ -8,7 +8,7 @@ return {
 
   -- Per machine: true on the desktop (single external monitor, no laptop
   -- panel), false on the laptop (eDP-1 + external HDMI monitor).
-  single_monitor = true,
+  single_monitor = false,
 
   monitors = {
     a = "eDP-1",

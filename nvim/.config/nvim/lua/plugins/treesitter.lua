@@ -8,7 +8,7 @@ return {
 			require('nvim-treesitter').setup()
 
 			local want = { "c", "c_sharp", "bash", "regex", "javascript", "typescript", "lua", "vim", "vimdoc", "query",
-				"markdown", "markdown_inline" }
+				"markdown", "markdown_inline", "kotlin", "rust", "toml" }
 			local have = require('nvim-treesitter.config').get_installed()
 			local todo = vim.iter(want):filter(function(p)
 				return not vim.tbl_contains(have, p)

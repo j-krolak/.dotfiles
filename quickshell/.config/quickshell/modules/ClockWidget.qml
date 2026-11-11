@@ -5,9 +5,11 @@ import Quickshell
 // SystemClock so we don't have to manage our own Timer + Date. Click it
 // to open the mini calendar (modules/Calendar.qml, its own window).
 Text {
-    color: Theme.foreground
+    color: Theme.barForeground
     font.family: Theme.fontFamily
     font.pixelSize: Theme.fontSize
+    height: Theme.fontSize + 7
+    verticalAlignment: Text.AlignVCenter
     leftPadding: Theme.modulePadding
     rightPadding: Theme.modulePadding
 
@@ -16,7 +18,7 @@ Text {
         precision: SystemClock.Minutes
     }
 
-    text: Qt.formatDateTime(clock.date, "HH:mm")
+    text: Qt.formatDateTime(clock.date, "ddd MMM d  HH:mm")
 
     MouseArea {
         anchors.fill: parent

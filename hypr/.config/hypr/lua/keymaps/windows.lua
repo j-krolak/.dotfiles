@@ -38,15 +38,13 @@ local keymaps = {
 
 	{
 		name = "Focus left",
-		keymap = "SUPER + SHITFT + H",
+		keymap = "SUPER + SHIFT + H",
 		action = hl.dsp.focus({ direction = "left" })
 	},
 	{
 		name = "Focus right",
 		keymap = "SUPER + SHIFT + L",
-		action = function()
-			hl.dsp.focus({ direction = "right" })
-		end
+		action = hl.dsp.focus({ direction = "right" })
 	},
 	{
 		name = "Focus up",
@@ -58,6 +56,7 @@ local keymaps = {
 		keymap = "SUPER + SHIFT + J",
 		action = hl.dsp.focus({ direction = "down" })
 	},
+
 
 	{
 		name = "Drag window",

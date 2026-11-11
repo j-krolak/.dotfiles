@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Effects
 import Quickshell.Hyprland
 
 // Mirrors waybar's "hyprland/workspaces" module in its simplest, classic
@@ -40,30 +41,20 @@ Row {
                     : wrapper.modelData.id
                 font.family: Theme.serifFamily
                 font.pixelSize: Theme.fontSize + 1
-                color: wrapper.occupied ? Theme.foreground : Theme.muted
+                color: wrapper.occupied ? Theme.barForeground : Theme.barMuted
                 opacity: wrapper.occupied || wrapper.modelData.active ? 1 : 0.8
-            }
+                font.bold: wrapper.modelData.active
 
-            Rectangle {
-                visible: wrapper.modelData.active
-                anchors.centerIn: parent
-                width: 24
-                height: 24
-                color: "transparent"
-                border.color: "#4a68b0"
-                border.width: 1
-                opacity: 1
-            }
-
-            Rectangle {
-                visible: wrapper.modelData.active
-                anchors.centerIn: parent
-                width: 18
-                height: 18
-                color: "transparent"
-                border.color: "#4a68b0"
-                border.width: 1
-                opacity: 0.7
+                // Soft halo around the active workspace's letter; MultiEffect
+                // pads the layer automatically so the blur isn't clipped.
+                layer.enabled: wrapper.modelData.active
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowColor: Theme.barForeground
+                    shadowBlur: 1.0
+                    shadowScale: 1.15
+                    shadowOpacity: 0.9
+                }
             }
 
             MouseArea {

@@ -15,6 +15,10 @@ herdr/.config/herdr/plugins.json
 herdr/.config/herdr/release-notes.json
 herdr/.config/herdr/.plugins.lock
 herdr/.config/herdr/plugins/
+herdr/.config/herdr/session-snapshots/
+
+# fish rewrites this on every `set -U`
+fish/.config/fish/fish_variables
 
 # Plugin managers clone these themselves
 tmux/.config/tmux/plugins/

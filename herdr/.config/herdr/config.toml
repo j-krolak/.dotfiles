@@ -3,6 +3,9 @@ onboarding = false
 sidebar_collapsed_mode = "hidden"
 sidebar_start_collapsed = true
 tab_bar_position = "bottom"
+hide_tab_bar_when_single_tab = true
+pane_outer_borders = false
+pane_gaps = false
 
 [keys]
 copy_mode = "prefix+["

@@ -6,11 +6,6 @@ return { {
     presets = {
       lsp_doc_border = true
     },
-    views = {
-      mini = {
-        timeout = 60000,
-      },
-    },
     routes = {
       {
         filter = {

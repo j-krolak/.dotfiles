@@ -10,7 +10,7 @@
     background:     rgba(0, 0, 0, 45%);
     background-alt: #0000;
     foreground:     #FFFFFFFF;
-    selected:       #FFFFFF10;
+    selected:       #FFFFFF1F;
 		selected-foreground: #fff;
     active:         #FFFF;
     urgent:         #E06C75FF;

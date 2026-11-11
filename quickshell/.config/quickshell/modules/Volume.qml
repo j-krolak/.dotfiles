@@ -3,10 +3,12 @@ import Quickshell.Services.Pipewire
 
 // Like waybar's "pulseaudio" module: shows the default sink's volume,
 // click to mute, scroll to adjust.
-Text {
+StatusItem {
     id: root
 
     readonly property PwNode sink: Pipewire.defaultAudioSink
+    readonly property bool muted: !sink || !sink.ready || sink.audio.muted
+    readonly property real vol: sink && sink.ready ? sink.audio.volume : 0
 
     // Tracking the node tells Quickshell to keep its volume/mute state
     // (sink.audio) actively bound instead of a one-off snapshot.
@@ -14,33 +16,21 @@ Text {
         objects: root.sink ? [root.sink] : []
     }
 
-    color: (sink && sink.audio.muted) ? Theme.muted : Theme.foreground
-    font.family: Theme.fontFamily
-    font.pixelSize: Theme.fontSize
-    leftPadding: Theme.modulePadding
-    rightPadding: Theme.modulePadding
+    tint: muted ? Theme.barMuted : Theme.barForeground
+    icon: muted ? "audio-volume-muted-symbolic"
+        : vol > 0.66 ? "audio-volume-high-symbolic"
+        : vol > 0.33 ? "audio-volume-medium-symbolic"
+        : "audio-volume-low-symbolic"
+    label: !sink || !sink.ready ? "--%" : sink.audio.muted ? "muted" : Math.round(vol * 100) + "%"
 
-    text: {
-        if (!sink || !sink.ready)
-            return "󰝟 --%"
-        if (sink.audio.muted)
-            return "󰝟 muted"
-        return "󰕾 " + Math.round(sink.audio.volume * 100) + "%"
+    onClicked: {
+        if (sink)
+            sink.audio.muted = !sink.audio.muted
     }
-
-    MouseArea {
-        anchors.fill: parent
-        acceptedButtons: Qt.LeftButton
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            if (root.sink)
-                root.sink.audio.muted = !root.sink.audio.muted
-        }
-        onWheel: wheel => {
-            if (!root.sink)
-                return
-            const step = wheel.angleDelta.y > 0 ? 0.05 : -0.05
-            root.sink.audio.volume = Math.max(0, Math.min(1, root.sink.audio.volume + step))
-        }
+    onWheel: e => {
+        if (!sink)
+            return
+        const step = e.angleDelta.y > 0 ? 0.05 : -0.05
+        sink.audio.volume = Math.max(0, Math.min(1, sink.audio.volume + step))
     }
 }

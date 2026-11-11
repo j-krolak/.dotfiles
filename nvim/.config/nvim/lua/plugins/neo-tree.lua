@@ -22,7 +22,7 @@ return {
       source_selector = {
         winbar = true,
         sources = {
-          { source = "filesystem", display_name = " Files " },
+          { source = "filesystem",      display_name = " Files " },
           { source = "dotnet_solution", display_name = " Solution " },
         },
       },
@@ -77,7 +77,7 @@ return {
           event = "file_opened",
           handler = function()
             -- Auto close via command
-            require("neo-tree.command").execute({ action = "close" })
+            -- require("neo-tree.command").execute({ action = "close" })
           end
         },
       },

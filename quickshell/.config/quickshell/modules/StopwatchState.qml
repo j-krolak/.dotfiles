@@ -1,16 +1,11 @@
 pragma Singleton
 import QtQuick
 
-// Same trick as TaskwarriorState: the bar widget (Stopwatch.qml) and the
-// popup (StopwatchOverview.qml) are independent windows, so the stopwatch
-// lives in a shared singleton. Elapsed time is derived from an absolute
-// start timestamp rather than incremented per tick, so a late tick can't
-// make it drift.
+// Stopwatch state, shared so it keeps running while the widgets panel is
+// closed. Elapsed time is derived from an absolute start timestamp rather
+// than incremented per tick, so a late tick can't make it drift.
 QtObject {
     id: root
-
-    property bool visible: false
-    property real popupX: 0
 
     property bool running: false
     // Time banked from previous run segments, before the last resume.

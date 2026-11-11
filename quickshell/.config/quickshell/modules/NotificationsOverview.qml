@@ -27,6 +27,11 @@ PanelWindow {
 
   visible: NotificationsState.visible
 
+
+
+  // Only one popup open at a time.
+
+  onVisibleChanged: if (visible) PopupManager.closeAll("Notifications")
   readonly property var items: NotificationsState.history
 
   MouseArea {
@@ -38,17 +43,15 @@ PanelWindow {
     id: card
     anchors.top: parent.top
     anchors.left: parent.left
-    anchors.topMargin: 5
+    anchors.topMargin: Theme.barGap + 1
     // Opens directly under the bell (NotificationsState.popupX, set on
     // click), clamped so it can't run off the right edge.
     anchors.leftMargin: Math.max(Theme.barGap,
       Math.min(NotificationsState.popupX, parent.width - width - Theme.barGap))
     width: 360
     height: layout.implicitHeight + 20
-    radius: 2
-    color: Theme.popupBackground
-
-    GreekFrame {}
+    radius: Theme.popupRadius
+    color: Theme.popupGlass
 
     // Swallows the click so it doesn't fall through to the full-screen
     // MouseArea behind the card and immediately close the panel.
@@ -70,7 +73,7 @@ PanelWindow {
         Text {
           id: title
           text: "Notifications" + (overview.items.length > 0 ? " (" + overview.items.length + ")" : "")
-          color: Theme.foreground
+          color: Theme.popupText
           font.family: Theme.fontFamily
           font.pixelSize: Theme.fontSize
           font.bold: true
@@ -81,7 +84,7 @@ PanelWindow {
           anchors.verticalCenter: title.verticalCenter
           visible: overview.items.length > 0
           text: "Clear all"
-          color: clearArea.containsMouse ? Theme.urgent : Theme.muted
+          color: clearArea.containsMouse ? Theme.popupUrgent : Theme.popupMuted
           font.family: Theme.fontFamily
           font.pixelSize: Theme.fontSize - 2
 
@@ -99,7 +102,7 @@ PanelWindow {
       Text {
         visible: overview.items.length === 0
         text: "Nothing new"
-        color: Theme.muted
+        color: Theme.popupMuted
         font.family: Theme.fontFamily
         font.pixelSize: Theme.fontSize - 1
       }
@@ -127,22 +130,8 @@ PanelWindow {
 
               width: list.width
               height: rowContent.implicitHeight + 16
-              radius: 0
-              color: rowArea.containsMouse ? Theme.hoverBackground : "transparent"
-
-              // Same accent line as the toasts (NotificationPopups.qml),
-              // on the right edge rather than an outline.
-              Rectangle {
-                width: 3
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                topLeftRadius: 0
-                bottomLeftRadius: 0
-                topRightRadius: parent.radius
-                bottomRightRadius: parent.radius
-                color: NotificationsState.urgencyColor(row.modelData)
-              }
+              radius: 6
+              color: rowArea.containsMouse ? Theme.popupHover : "transparent"
 
               MouseArea {
                 id: rowArea
@@ -181,7 +170,7 @@ PanelWindow {
                     Text {
                       id: appName
                       text: row.modelData.appName
-                      color: Theme.muted
+                      color: Theme.popupMuted
                       font.family: Theme.fontFamily
                       font.pixelSize: Theme.fontSize - 3
                     }
@@ -189,7 +178,7 @@ PanelWindow {
                     Text {
                       anchors.right: parent.right
                       text: Qt.formatDateTime(NotificationsState.timeOf(row.modelData), "HH:mm")
-                      color: Theme.muted
+                      color: Theme.popupMuted
                       font.family: Theme.fontFamily
                       font.pixelSize: Theme.fontSize - 3
                     }
@@ -198,7 +187,7 @@ PanelWindow {
                   Text {
                     width: parent.width
                     text: row.modelData.summary
-                    color: Theme.foreground
+                    color: Theme.popupText
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.fontSize - 1
                     font.bold: true
@@ -211,7 +200,7 @@ PanelWindow {
                     visible: text.length > 0
                     width: parent.width
                     text: row.modelData.body
-                    color: Theme.foreground
+                    color: Theme.popupText
                     font.family: Theme.fontFamily
                     font.pixelSize: Theme.fontSize - 2
                     wrapMode: Text.WordWrap

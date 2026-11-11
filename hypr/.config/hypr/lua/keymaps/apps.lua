@@ -26,6 +26,12 @@ local keymaps      = {
 	},
 
 	{
+		name = "Calculator",
+		keymap = "ALT + C",
+		action = hl.exec("rofi -show calc -modi calc -no-show-match -no-sort -calc-command 'echo -n \"{result}\" | wl-copy' -theme ~/.config/rofi/launchers/type-1/rofi-style.rasi")
+	},
+
+	{
 		name = "Wallpaper picker",
 		keymap = "SUPER + B",
 		action = hl.exec("qs ipc call wallpaper toggle")

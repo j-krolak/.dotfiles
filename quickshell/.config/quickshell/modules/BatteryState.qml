@@ -3,7 +3,7 @@ import QtQuick
 import Quickshell.Io
 import Quickshell.Services.UPower
 
-// Same trick as CalendarState/TaskwarriorState: the bar widget
+// Same trick as CalendarState: the bar widget
 // (Battery.qml) and the popup (BatteryOverview.qml, its own top-level
 // window under shell.qml's ShellRoot) are independent windows with no
 // parent/child relationship, so a shared singleton is the simplest way for

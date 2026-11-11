@@ -16,7 +16,7 @@ configuration {
 	display-run:                " Run";
 	display-filebrowser:        " Files"; 
 	display-window:             " Windows"; 
-	drun-display-format:        "{icon} {name}";
+	drun-display-format:        "{name}  [<span size='small' alpha='50%'>{generic}</span>]";
 	window-format:              "{w} · {c} · {t}";
 }
 
@@ -57,17 +57,17 @@ window {
     location:                    center;
     anchor:                      center;
     fullscreen:                  false;
-    width:                       600px;
+    width:                       680px;
     x-offset:                    0px;
-    y-offset:                    0px;
+    y-offset:                    -120px;
 
     /* properties for all widgets */
     enabled:                     true;
     margin:                      0px;
     padding:                     0px;
-    border:                      0px solid;
-    border-radius:               15px;
-    border-color:                @border-colour;
+    border:                      1px solid;
+    border-radius:               20px;
+    border-color:                #ffffff1f;
     cursor:                      "default";
     /* Backgroud Colors */
     background-color:            @background-colour;
@@ -84,9 +84,9 @@ window {
 /*****----- Main Box -----*****/
 mainbox {
     enabled:                     true;
-    spacing:                     10px;
+    spacing:                     8px;
     margin:                      0px;
-    padding:                     20px;
+    padding:                     14px;
     border-color:                transparent;
     background-color:            transparent;
     children:                    [ "inputbar", "message", "listview" ];
@@ -95,15 +95,15 @@ mainbox {
 /*****----- Inputbar -----*****/
 inputbar {
     enabled:                     true;
-    spacing:                     10px;
-    margin:                      0px;
-    padding:                     10px;
-    border:                      0px solid;
-    border-radius:               5px;
-    border-color:                @border-colour;
-    background-color:            @alternate-background;
+    spacing:                     14px;
+    margin:                      0px 0px 6px 0px;
+    padding:                     8px 12px 16px 12px;
+    border:                      0px 0px 1px 0px;
+    border-radius:               0px;
+    border-color:                #ffffff1f;
+    background-color:            transparent;
     text-color:                  @foreground-colour;
-    children:                    [ "prompt", "textbox-prompt-colon", "entry" ];
+    children:                    [ "textbox-prompt-colon", "entry" ];
 }
 
 prompt {
@@ -112,19 +112,22 @@ prompt {
     text-color:                  inherit;
 }
 textbox-prompt-colon {
-    enabled:                     false;
+    enabled:                     true;
     expand:                      false;
-    str:                         "::";
+    str:                         "";
+    font:                        "MesloLGS NF 16";
+    vertical-align:              0.5;
     background-color:            inherit;
-    text-color:                  inherit;
+    text-color:                  #ffffffb3;
 }
 entry {
     enabled:                     true;
     background-color:            inherit;
     text-color:                  inherit;
+    font:                        "Inter 17";
     cursor:                      text;
-    placeholder:                 "Search...";
-    placeholder-color:           inherit;
+    placeholder:                 "Search";
+    placeholder-color:           #ffffff66;
 }
 num-filtered-rows {
     enabled:                     true;
@@ -155,16 +158,16 @@ case-indicator {
 listview {
     enabled:                     true;
     columns:                     1;
-    lines:                       6;
+    lines:                       7;
     cycle:                       true;
     dynamic:                     true;
-    scrollbar:                   true;
+    scrollbar:                   false;
     layout:                      vertical;
     reverse:                     false;
     fixed-height:                true;
     fixed-columns:               true;
     
-    spacing:                     10px;
+    spacing:                     2px;
     margin:                      0px;
     padding:                     0px;
     border:                      0px solid;
@@ -184,9 +187,9 @@ scrollbar {
 /*****----- Elements -----*****/
 element {
     enabled:                     true;
-    spacing:                     10px;
+    spacing:                     14px;
     margin:                      0px;
-    padding:                     10px;
+    padding:                     9px 12px;
     border:                      0px solid;
     border-radius:               10px;
     border-color:                @border-colour;
@@ -233,12 +236,13 @@ element alternate.active {
 element-icon {
     background-color:            transparent;
     text-color:                  inherit;
-    size:                        24px;
+    size:                        32px;
     cursor:                      inherit;
 }
 element-text {
     background-color:            transparent;
     text-color:                  inherit;
+    font:                        "Inter 12";
     highlight:                   inherit;
     cursor:                      inherit;
     vertical-align:              0.5;

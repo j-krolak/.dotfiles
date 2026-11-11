@@ -17,7 +17,7 @@ PanelWindow {
   }
   exclusiveZone: 0
   color: "transparent"
-  // Same namespace Calendar.qml/TaskwarriorOverview.qml/BatteryOverview.qml
+  // Same namespace Calendar.qml/BatteryOverview.qml
   // use - matched by a Hyprland layer rule that blurs it.
   Component.onCompleted: {
     if (this.WlrLayershell != null) {
@@ -27,6 +27,11 @@ PanelWindow {
 
   visible: PowerState.visible
 
+
+
+  // Only one popup open at a time.
+
+  onVisibleChanged: if (visible) PopupManager.closeAll("Power")
   MouseArea {
     anchors.fill: parent
     onClicked: PowerState.visible = false

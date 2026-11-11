@@ -15,9 +15,24 @@ return {
 		action = hl.exec('~/.config/hypr/scripts/screenshot_annotated.sh')
 	},
 	{
+		name = "Screenshot focused monitor, to clipboard",
+		keymap = "ALT + CTRL + S",
+		action = hl.exec('~/.config/hypr/scripts/screenshot_screen.sh')
+	},
+	{
+		name = "Screenshot all monitors, to clipboard",
+		keymap = "ALT + CTRL + SHIFT + S",
+		action = hl.exec('~/.config/hypr/scripts/screenshot_screen.sh --all')
+	},
+	{
 		name = "Start screen recording",
 		keymap = "ALT + SHIFT + V",
 		action = hl.exec("~/.config/hypr/scripts/record_video.sh")
+	},
+	{
+		name = "Start full screen recording",
+		keymap = "ALT + CTRL + SHIFT + V",
+		action = hl.exec("~/.config/hypr/scripts/record_video.sh --screen")
 	},
 	{
 		name = "Start gif recording",

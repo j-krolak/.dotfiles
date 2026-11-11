@@ -55,7 +55,7 @@ return {
 			-- mason-lspconfig only installs LSP servers; formatters go through the registry.
 			local registry = require("mason-registry")
 			registry.refresh(function()
-				for _, name in ipairs({ "clang-format", "prettier", "csharpier" }) do
+				for _, name in ipairs({ "clang-format", "prettier", "csharpier", "ktlint" }) do
 					local pkg = registry.get_package(name)
 					if not pkg:is_installed() then
 						pkg:install()
@@ -64,7 +64,7 @@ return {
 			end)
 
 			require("mason-lspconfig").setup({
-				ensure_installed = { "ts_ls", "vue_ls", "clangd", "pyright", "eslint", "lua_ls", "html", "cssls", "lemminx" },
+				ensure_installed = { "ts_ls", "vue_ls", "clangd", "pyright", "eslint", "lua_ls", "html", "cssls", "lemminx", "kotlin_lsp", "rust_analyzer" },
 				-- easy-dotnet.nvim ships its own Roslyn client ("easy_dotnet"); letting
 				-- mason-lspconfig also auto-enable the generic "roslyn_ls" server attaches
 				-- a second LSP client to C# buffers, doubling codelens (e.g. references count).

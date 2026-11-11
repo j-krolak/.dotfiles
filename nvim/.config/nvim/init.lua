@@ -14,9 +14,15 @@ vim.opt.fillchars:append({ diff = " " })
 vim.o.cursorline = true
 
 vim.opt.title = true
+vim.opt.splitright = true
 
-vim.o.foldcolumn = "1"
+vim.wo.signcolumn = "yes"
+vim.opt.list = true
+vim.opt.listchars = vim.opt.listchars + "space:·"
+
+vim.lsp.inlay_hint.enable(true)
+
 vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
-vim.opt.fillchars:append({ fold = " ", foldopen = "▾", foldclose = "▸", foldsep = " " })
+vim.opt.fillchars:append({ fold = "·", foldopen = "▾", foldclose = "▸", foldsep = " " })

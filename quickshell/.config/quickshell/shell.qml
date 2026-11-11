@@ -7,6 +7,9 @@ import "modules"
 // Each one is a fully independent PanelWindow defined in modules/ - look
 // there for the actual bar layout and behavior.
 ShellRoot {
+  // Instantiates PopupManager so only one popup is open at a time.
+  readonly property var popupManager: PopupManager
+
   // One Bar per connected monitor, instead of a single fixed one -
   // Variants re-creates its delegate for every entry in Quickshell.screens,
   // so plugging in (or unplugging) a second monitor adds/removes a bar
@@ -34,9 +37,8 @@ ShellRoot {
   Osd {}
   NotificationPopups {}
   Calendar {}
-  TaskwarriorOverview {}
-  StopwatchOverview {}
-  SystemStatsOverview {}
+  AgentsPanel {}
+  MarketsPanel {}
   WallpaperPickerOverview {}
   BatteryOverview {}
   PowerOverview {}

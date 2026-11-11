@@ -5,7 +5,7 @@ import QtQuick
 // is open. It's only ever toggled from outside QML - the "qs ipc call
 // wallpaper toggle" IPC target in that file, bound to a Hyprland keybind -
 // but still lives in its own singleton rather than as a plain property on
-// the window, matching CalendarState/TaskwarriorState's pattern for
+// the window, matching CalendarState's pattern for
 // cross-window state.
 QtObject {
     property bool visible: false
